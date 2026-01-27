@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -42,22 +45,26 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Create user
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
 
-      if (response.ok) {
-        router.push("/login?registered=true");
-      } else {
-        const data = await response.json();
-        setError(data.message || "Registration failed");
+      // Update profile name
+      if (userCredential.user) {
+        await updateProfile(userCredential.user, {
+          displayName: `${formData.firstName} ${formData.lastName}`.trim()
+        });
       }
-    } catch (err) {
-      setError("An error occurred. Please try again.");
+
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/email-already-in-use') {
+        setError("Email is already in use.");
+      } else if (err.code === 'auth/weak-password') {
+        setError("Password is too weak.");
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
