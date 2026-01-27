@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,21 +19,31 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
-
-      if (result?.error) {
-        setError("Invalid email or password");
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/invalid-credential') {
+        setError("Invalid email or password.");
+      } else if (err.code === 'auth/user-not-found') {
+        setError("No user found with this email.");
+      } else if (err.code === 'auth/wrong-password') {
+        setError("Incorrect password.");
       } else {
-        router.push("/dashboard");
+        setError("Failed to sign in. Please check your connection.");
       }
-    } catch (err) {
-      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      router.push("/dashboard");
+    } catch (err) {
+      console.error(err);
+      setError("Google sign-in failed.");
     }
   };
 
@@ -172,14 +183,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {/* Google */}
             <button
               type="button"
               className="flex items-center justify-center py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200"
-              onClick={() => signIn("google")}
+              onClick={handleGoogleLogin}
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -197,33 +208,12 @@ export default function LoginPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-            </button>
-
-            {/* Facebook */}
-            <button
-              type="button"
-              className="flex items-center justify-center py-2.5 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-lg shadow-sm transition-all duration-200"
-              onClick={() => signIn("facebook")}
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v2.277h-1.55c-2.006 0-2.327.945-2.327 2.308v2.675h4.417l-.59 3.667h-3.827v7.98h-4.59Z" />
-              </svg>
-            </button>
-
-            {/* Apple */}
-            <button
-              type="button"
-              className="flex items-center justify-center py-2.5 bg-black hover:bg-gray-900 text-white rounded-lg shadow-sm transition-all duration-200"
-              onClick={() => signIn("apple")}
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.127 3.688-.543 9.13 1.526 12.128.878 1.256 1.936 2.76 3.14 2.723 1.258-.047 1.745-.818 3.238-.818 1.493 0 1.908.818 3.21.815 1.256-.037 2.15-1.398 2.946-2.56 1.436-1.95 2.01-4.82 2.023-4.925-.044-.01-3.89-1.49-3.93-5.92-.045-3.71 3.033-5.46 3.16-5.545-1.733-2.533-4.425-2.822-5.366-2.86-1.127-.05-2.214.65-2.84 1.015-.662.37-1.68.747-2.73.747h-.158c.846-4.524 3.738-6.19 4.63-6.19-.244-.555-.572-1.07-1.026-1.503-1.89-1.9-5.186-1.428-5.36-1.428l-.053.003h-.177Z" />
-              </svg>
+              Sign in with Google
             </button>
           </div>
 
           {/* Sign Up Link */}
-          <div className="text-center">
+          <div className="text-center mt-6">
             <Link
               href="/register"
               className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium transition-colors"
