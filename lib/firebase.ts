@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,23 +12,26 @@ const firebaseConfig = {
 
 // Safety check for missing config
 if (!firebaseConfig.apiKey) {
-  console.warn("Firebase Config missing! Login will not work.");
+  console.warn("Firebase Config missing! Login will not work locally.");
 }
 
 // Initialize Firebase (singleton pattern) with fallback
 let app;
 let auth: any;
 let googleProvider: any;
+let facebookProvider: any;
 
 try {
   app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
   googleProvider = new GoogleAuthProvider();
+  facebookProvider = new FacebookAuthProvider();
 } catch (e) {
   console.error("Firebase Init Error:", e);
   // Mock auth to prevent crash
   auth = { currentUser: null };
   googleProvider = {};
+  facebookProvider = {};
 }
 
-export { auth, googleProvider };
+export { auth, googleProvider, facebookProvider };
