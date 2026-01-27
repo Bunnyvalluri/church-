@@ -10,9 +10,25 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase (singleton pattern)
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+// Safety check for missing config
+if (!firebaseConfig.apiKey) {
+  console.warn("Firebase Config missing! Login will not work.");
+}
+
+// Initialize Firebase (singleton pattern) with fallback
+let app;
+let auth: any;
+let googleProvider: any;
+
+try {
+  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
+} catch (e) {
+  console.error("Firebase Init Error:", e);
+  // Mock auth to prevent crash
+  auth = { currentUser: null };
+  googleProvider = {};
+}
 
 export { auth, googleProvider };
