@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider, facebookProvider } from "@/lib/firebase";
+import { auth, googleProvider, facebookProvider, twitterProvider } from "@/lib/firebase";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,6 +47,22 @@ export default function LoginPage() {
     }
   };
 
+  const handleTwitterLogin = async () => {
+    try {
+      await signInWithPopup(auth, twitterProvider);
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error("Twitter Sign-in Error:", err);
+      // Mock Fallback
+      if (!auth.app) {
+        console.warn("Using Mock Login (No Firebase Keys found)");
+        router.push("/dashboard");
+        return;
+      }
+      setError("Twitter sign-in failed.");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -58,7 +74,7 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error(err);
 
-      // Mock Fallback for Development/Demo if keys are missing
+      // Mock Fallback
       if (!auth.app || err.code === 'auth/argument-error' || err.message.includes('auth instance')) {
         console.warn("Using Mock Login (No Firebase Keys found)");
         await new Promise(r => setTimeout(r, 1000));
@@ -190,6 +206,18 @@ export default function LoginPage() {
                 <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v2.277h-1.55c-2.006 0-2.327.945-2.327 2.308v2.675h4.417l-.59 3.667h-3.827v7.98h-4.59Z" />
               </svg>
               Sign in with Facebook
+            </button>
+
+            {/* Twitter */}
+            <button
+              type="button"
+              className="w-full flex items-center justify-center py-2.5 bg-black hover:bg-gray-800 text-white rounded-lg shadow-sm transition-all duration-200"
+              onClick={handleTwitterLogin}
+            >
+              <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              Sign in with X
             </button>
           </div>
 

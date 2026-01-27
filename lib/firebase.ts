@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,18 +20,21 @@ let app;
 let auth: any;
 let googleProvider: any;
 let facebookProvider: any;
+let twitterProvider: any;
 
 try {
   app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
   googleProvider = new GoogleAuthProvider();
   facebookProvider = new FacebookAuthProvider();
+  twitterProvider = new TwitterAuthProvider();
 } catch (e) {
   console.error("Firebase Init Error:", e);
   // Mock auth to prevent crash
   auth = { currentUser: null };
   googleProvider = {};
   facebookProvider = {};
+  twitterProvider = {};
 }
 
-export { auth, googleProvider, facebookProvider };
+export { auth, googleProvider, facebookProvider, twitterProvider };
