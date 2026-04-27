@@ -2,6 +2,7 @@
 
 import { Play, Calendar, User, Eye, X } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 const sermons = [
   {
@@ -98,10 +99,12 @@ export default function Sermons() {
                 className="relative h-48 overflow-hidden cursor-pointer"
                 onClick={() => setSelectedVideo(sermon.videoId)}
               >
-                <img
+                <Image
                   src={sermon.thumbnail}
                   alt={sermon.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 {/* Play Overlay */}
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

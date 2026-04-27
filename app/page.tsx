@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Hero from "@/components/sections/Hero";
 import Navbar from "@/components/layout/Navbar";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 
 // Critical components loaded immediately
 // Everything else lazy loaded
@@ -18,12 +19,12 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
-      <About />
-      <Services />
-      <Events />
-      <Sermons />
-      <Testimonials />
-      <Contact />
+      <ScrollReveal><About /></ScrollReveal>
+      <ScrollReveal delay={0.1}><Services /></ScrollReveal>
+      <ScrollReveal delay={0.1}><Events /></ScrollReveal>
+      <ScrollReveal delay={0.1}><Sermons /></ScrollReveal>
+      <ScrollReveal delay={0.1}><Testimonials /></ScrollReveal>
+      <ScrollReveal delay={0.1}><Contact /></ScrollReveal>
       <Footer />
       <AIChat />
     </main>

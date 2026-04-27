@@ -1,6 +1,7 @@
 "use client";
 
 import { Star, Quote } from "lucide-react";
+import Image from "next/image";
 
 const testimonials = [
   {
@@ -98,11 +99,15 @@ export default function Testimonials() {
 
               {/* Author */}
               <div className="flex items-center gap-4">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
-                />
+                <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white/30">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    fill
+                    className="object-cover"
+                    sizes="48px"
+                  />
+                </div>
                 <div>
                   <h4 className="font-semibold text-white">{testimonial.name}</h4>
                   <p className="text-sm text-purple-200">{testimonial.role}</p>
