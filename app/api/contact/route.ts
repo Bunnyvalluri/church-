@@ -1,40 +1,20 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import sanitizeHtml from "sanitize-html";
-
-// Define a strict schema for the incoming payload
-const contactSchema = z.object({
-  name: z.string().min(2, "Name is too short").max(100, "Name is too long"),
-  email: z.string().email("Invalid email format").max(255),
-  phone: z.string().max(20).optional().nullable(),
-  subject: z.string().min(2).max(150),
-  message: z.string().min(5).max(2000), // Protect against massive payloads (DoS)
-});
+import { prisma } from "../../../lib/prisma";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    
-    // 1. Zod Validation (Strict Type Checking)
-    const validationResult = contactSchema.safeParse(body);
-    
-    if (!validationResult.success) {
+    const { name, email, phone, subject, message } = body;
+
+    // Simple validation
+    if (!name || !email || !subject || !message) {
       return NextResponse.json(
-        { error: "Validation failed", details: validationResult.error.issues },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const { name, email, phone, subject, message } = validationResult.data;
-
-    // 2. Sanitization (Prevent Stored XSS)
-    const cleanMessage = sanitizeHtml(message, {
-      allowedTags: [], // Strip ALL HTML tags
-      allowedAttributes: {}
-    });
-
-    // 3. Attempt to save to database securely
+    // Attempt to save to database
     try {
       await prisma.contactMessage.create({
         data: {
@@ -42,16 +22,16 @@ export async function POST(req: Request) {
           email,
           phone: phone || null,
           subject,
-          message: cleanMessage,
+          message,
         },
       });
-      console.log(`[CONTACT FORM] Secure message saved from ${name}`);
+      console.log(`[CONTACT FORM] Message saved from ${name}`);
     } catch (dbError) {
-      console.error("[CONTACT FORM] Database not configured, falling back to server log:");
+      // Fallback to logging if DB is not connected locally
+      console.error("[CONTACT FORM] DB Error, logging to console instead.");
       console.log(`--- NEW MESSAGE FROM: ${name} (${email}) ---`);
       console.log(`Subject: ${subject}`);
-      console.log(`Phone: ${phone || "N/A"}`);
-      console.log(`Message: ${cleanMessage}`);
+      console.log(`Message: ${message}`);
       console.log(`-------------------------------------------`);
     }
 
@@ -60,9 +40,9 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("[CONTACT FORM] Error processing request:", error);
+    console.error("[CONTACT FORM] Error:", error);
     return NextResponse.json(
-      { error: "Failed to send message" },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
