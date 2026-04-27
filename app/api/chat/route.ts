@@ -7,7 +7,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
-export const runtime = 'edge';
+// Using Node.js runtime instead of Edge to prevent OpenRouter ECONNRESET connection drops
 
 export async function POST(req: Request) {
   try {
