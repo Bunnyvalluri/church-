@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import { CreditCard, Building, Smartphone, Heart, Check } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Give Online | Kingdom of Christ Ministries",
-  description: "Support the ministry of Kingdom of Christ Ministries through online giving",
-};
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function GivePage() {
+  const { t } = useLanguage();
+  const pageT = t.pages.give;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       {/* Hero */}
@@ -20,10 +20,10 @@ export default function GivePage() {
               <span>Generous Giving</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in-up">
-              Give Online
+              {pageT.title}
             </h1>
             <p className="text-xl text-purple-100 animate-fade-in-up animate-delay-200">
-              Your generosity helps us spread the Gospel and serve our community
+              {pageT.subtitle}
             </p>
           </div>
         </div>
@@ -34,7 +34,7 @@ export default function GivePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-16 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Why We Give
+              {pageT.why}
             </h2>
             <p className="text-xl text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
               Giving is an act of worship and obedience to God. Your generosity helps us:
@@ -65,7 +65,7 @@ export default function GivePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
-              Ways to Give
+              {pageT.ways}
             </h2>
             <div className="grid md:grid-cols-3 gap-8 stagger-children">
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl hover-lift text-center">
@@ -132,7 +132,7 @@ export default function GivePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
-              Giving Options
+              {pageT.options}
             </h2>
             <div className="grid md:grid-cols-2 gap-6 stagger-children">
               {[

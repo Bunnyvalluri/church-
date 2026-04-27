@@ -2,45 +2,48 @@
 
 import Link from "next/link";
 import { Church, Facebook, Instagram, Youtube, Twitter, Mail, Phone, MapPin } from "lucide-react";
-
-const footerLinks = {
-  about: [
-    { name: "Our Story", href: "/about/story" },
-    { name: "Leadership", href: "/about/leadership" },
-    { name: "Our Beliefs", href: "/about/beliefs" },
-    { name: "Ministries", href: "/about/ministries" },
-    { name: "Mission & Vision", href: "/about/mission" },
-  ],
-  resources: [
-    { name: "Sermons", href: "/sermons" },
-    { name: "Events Calendar", href: "/events" },
-    { name: "Blog & Articles", href: "/blog" },
-    { name: "Prayer Requests", href: "/prayer" },
-    { name: "Bible Study", href: "/resources/bible-study" },
-    { name: "Media Library", href: "/resources/media" },
-  ],
-  getInvolved: [
-    { name: "Join a Small Group", href: "/get-involved/small-groups" },
-    { name: "Volunteer", href: "/get-involved/volunteer" },
-    { name: "Serve", href: "/get-involved/serve" },
-    { name: "Give Online", href: "/give" },
-    { name: "Become a Member", href: "/membership" },
-  ],
-  connect: [
-    { name: "Contact Us", href: "#contact" },
-    { name: "Visit Us", href: "#about" },
-    { name: "Service Times", href: "#services" },
-    { name: "Locations", href: "#about" },
-  ],
-};
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function Footer() {
+  const { t, language } = useLanguage();
+
+  const footerLinks = {
+    about: [
+      { name: t.links.story, href: "/about/story" },
+      { name: t.links.leadership, href: "/about/leadership" },
+      { name: t.links.beliefs, href: "/about/beliefs" },
+      { name: t.links.ministries, href: "/about/ministries" },
+      { name: t.links.mission, href: "/about/mission" },
+    ],
+    resources: [
+      { name: t.links.sermons, href: "/sermons" },
+      { name: t.links.events, href: "/events" },
+      { name: t.links.blog, href: "/blog" },
+      { name: t.links.prayer, href: "/prayer" },
+      { name: t.links.bibleStudy, href: "/resources/bible-study" },
+      { name: t.links.media, href: "/resources/media" },
+    ],
+    getInvolved: [
+      { name: t.links.smallGroups, href: "/get-involved/small-groups" },
+      { name: t.links.volunteer, href: "/get-involved/volunteer" },
+      { name: t.links.serve, href: "/get-involved/serve" },
+      { name: t.links.give, href: "/give" },
+      { name: t.links.member, href: "/membership" },
+    ],
+    connect: [
+      { name: t.links.contact, href: "#contact" },
+      { name: t.links.visit, href: "#about" },
+      { name: t.links.services, href: "#services" },
+      { name: t.links.locations, href: "#about" },
+    ],
+  };
+
   return (
-    <footer className="relative bg-gray-900 text-gray-300">
+    <footer className="relative bg-gray-900 text-gray-300 border-t border-white/5">
       {/* Gradient Top Border */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500" />
       {/* Main Footer */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
@@ -56,8 +59,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-gray-400 mb-6">
-              A place where faith meets community. Join us in worship, prayer, and
-              growing together in Christ.
+              {language === 'te' ? "విశ్వాసం మరియు సమాజం కలుసుకునే ప్రదేశం. ఆరాధన, ప్రార్థన మరియు క్రీస్తులో కలిసి ఎదగడంలో మాతో చేరండి." : "A place where faith meets community. Join us in worship, prayer, and growing together in Christ."}
             </p>
             {/* Social Links */}
             <div className="flex gap-4">
@@ -98,7 +100,7 @@ export default function Footer() {
 
           {/* About Links */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-6">About</h3>
+            <h3 className="text-white font-bold text-lg mb-6">{t.links.about}</h3>
             <ul className="space-y-3">
               {footerLinks.about.map((link) => (
                 <li key={link.name}>
@@ -115,7 +117,7 @@ export default function Footer() {
 
           {/* Resources Links */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-6">Resources</h3>
+            <h3 className="text-white font-bold text-lg mb-6">{t.links.resources}</h3>
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
@@ -132,7 +134,7 @@ export default function Footer() {
 
           {/* Get Involved Links */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-6">Get Involved</h3>
+            <h3 className="text-white font-bold text-lg mb-6">{t.links.getInvolved}</h3>
             <ul className="space-y-3">
               {footerLinks.getInvolved.map((link) => (
                 <li key={link.name}>
@@ -149,7 +151,7 @@ export default function Footer() {
 
           {/* Connect */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-6">Connect</h3>
+            <h3 className="text-white font-bold text-lg mb-6">{t.links.connect}</h3>
             <ul className="space-y-4">
               {footerLinks.connect.map((link) => (
                 <li key={link.name}>
