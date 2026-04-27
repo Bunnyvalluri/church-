@@ -75,9 +75,10 @@ export default function LoginPage() {
       console.error(err);
 
       // Mock Fallback
-      if (!auth.app || err.code === 'auth/argument-error' || err.message.includes('auth instance')) {
+      if (!auth.app) {
         console.warn("Using Mock Login (No Firebase Keys found)");
-        await new Promise(r => setTimeout(r, 1000));
+        localStorage.setItem("church_user", JSON.stringify({ name: "Member User", email: "member@church.org" }));
+        window.dispatchEvent(new Event("storage"));
         router.push("/dashboard");
         return;
       }
