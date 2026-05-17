@@ -1,92 +1,137 @@
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import OpenAI from 'openai';
+import { z } from 'zod';
+import { isRateLimited, rateLimitHeaders } from '@/lib/rateLimit';
+import { getClientIp, safeJson } from '@/lib/apiResponse';
 
-// Create an OpenAI API client pointing to OpenRouter
+// ── OpenRouter client ────────────────────────────────────────────────────────
 const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY || "",
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY || '',
   defaultHeaders: {
-    "HTTP-Referer": "https://kingdomofchrist.org",
-    "X-Title": "KCM Church Assistant",
-  }
+    'HTTP-Referer': 'https://kingdomofchrist.vercel.app',
+    'X-Title': 'KCM Church Assistant',
+  },
 });
 
-// Simple In-Memory Rate Limiter to protect AI tokens
-const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 10; // Max 10 messages per minute per IP
+// ── Validation ───────────────────────────────────────────────────────────────
+const messageSchema = z.object({
+  role: z.enum(['user', 'assistant', 'system']),
+  content: z.string().min(1).max(2000),
+});
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const userRate = rateLimitMap.get(ip);
+const chatSchema = z.object({
+  messages: z.array(messageSchema).min(1).max(20),
+});
 
-  if (!userRate || now - userRate.lastReset > RATE_LIMIT_WINDOW_MS) {
-    rateLimitMap.set(ip, { count: 1, lastReset: now });
-    return false;
-  }
-  if (userRate.count >= MAX_REQUESTS_PER_WINDOW) {
-    return true;
-  }
-  userRate.count += 1;
-  return false;
-}
+// ── Rate limit config ────────────────────────────────────────────────────────
+const RL_OPTS = { windowMs: 60_000, maxRequests: 10 };
 
+// ── KCM System Prompt ────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are a helpful, spiritual, and welcoming assistant for Kingdom of Christ Ministries (KCM), a Christian church in Hyderabad, India.
+
+CHURCH DETAILS:
+- Name: Kingdom of Christ Ministries (KCM)
+- Address: 15-201, Vivekananda Nagar, Srinivas Nagar, Jeedimetla, Hyderabad, Telangana 500055
+- Senior Pastor: Gangareddy (B.Th.)
+- Contact: 97040 90069 | 73964 33856 | 99664 30999 | 96409 43777
+
+SERVICE SCHEDULE:
+Sunday:
+  • 5:45 AM  — Watch Tower (Early Morning Worship)
+  • 8:30 AM  — Sunday Service
+  • 10:00 AM — Senior Pastor Special Message
+  • 10:30 AM — Youth Service
+
+Weekly:
+  • Wednesday  6:30 PM — Prayer Meeting
+  • Thursday   7:00 AM & 10:00 AM — Fasting Prayer
+  • Saturday   6:30 PM — Special Meeting
+
+Monthly:
+  • 3rd Friday 4:00 PM — Healing Worship
+  • 1st Sunday           — Water Baptism Service
+
+GUIDELINES:
+- Be warm, spiritual, and encouraging in every response
+- Use phrases like "Praise the Lord", "God bless you", "Hallelujah" naturally
+- Keep answers concise but complete
+- For prayer requests, offer a short prayer or blessing
+- Do NOT make up information not listed above
+- If you don't know something, say "Please contact us at 97040 90069"
+
+MULTILINGUAL:
+- Detect the user's language automatically
+- If Telugu → reply entirely in Telugu (తెలుగు)
+- If Hindi  → reply entirely in Hindi (हिंदी)
+- If English → reply in English
+- Mix languages only if the user mixes them`;
+
+// ── POST /api/chat ────────────────────────────────────────────────────────────
 export async function POST(req: Request) {
+  // 1. Rate limiting
+  const ip = getClientIp(req);
+  const rlHeaders = rateLimitHeaders(ip, RL_OPTS);
+
+  if (isRateLimited(ip, RL_OPTS)) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded. Please wait a minute.' }),
+      { status: 429, headers: { 'Content-Type': 'application/json', ...rlHeaders, 'Retry-After': '60' } }
+    );
+  }
+
+  // 2. Parse body
+  const body = await safeJson<unknown>(req);
+  if (!body) {
+    return new Response(
+      JSON.stringify({ error: 'Invalid request body' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // 3. Validate message shape
+  const parsed = chatSchema.safeParse(body);
+  if (!parsed.success) {
+    return new Response(
+      JSON.stringify({ error: 'Invalid message format', details: parsed.error.errors }),
+      { status: 422, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const { messages } = parsed.data;
+
+  // 4. Filter out any injected system messages from client (security)
+  const safeMessages = messages.filter((m) => m.role !== 'system');
+
+  // 5. Call AI with streaming
   try {
-    // 1. Rate Limiting Security
-    const ip = req.headers.get("x-forwarded-for") || "unknown-ip";
-    if (isRateLimited(ip)) {
-      return new Response(
-        JSON.stringify({ error: "Rate limit exceeded. Please wait a minute before sending more messages." }),
-        { status: 429, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const { messages } = await req.json();
-
-    // 2. Payload Validation: Prevent massive context arrays to save tokens
-    if (!messages || !Array.isArray(messages) || messages.length > 20) {
-      return new Response(
-        JSON.stringify({ error: "Invalid conversation history. Conversation too long." }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
     const response = await openai.chat.completions.create({
-      model: 'google/gemini-2.0-flash-001', 
+      model: 'google/gemini-2.0-flash-001',
       stream: true,
+      max_tokens: 800,
+      temperature: 0.7,
       messages: [
-        {
-          role: "system",
-          content: `You are a helpful, spiritual, and welcoming assistant for Kingdom of Christ Ministries (KCM) church. 
-Your goal is to help answer questions about service times, locations, prayer, ministries, events, etc.
-Address: H.No. 15-201, Vivekananda Nagar, J.P. Road, Hafeezpet, Hyderabad - 55.
-Senior Pastor: Gangareddy (B.Th.)
-Contact Numbers: 97040 90069, 73964 33856, 99664 30999, 96409 43777
-Sunday Services: 5:45 AM (Watch Tower), 8:30 AM (Sunday Service), 10:30 AM (Youth Service). Senior Pastor Special Message at 10:00 AM.
-Weekly Meetings: Wednesday 6:30 PM (Prayer), Thursday 7:00 AM & 10:00 AM (Fasting Prayer), Saturday 6:30 PM (Special Meeting).
-Monthly Meetings: 3rd Friday 4:00 PM (Healing Worship), 1st Sunday (Baptisms).
-
-MULTILINGUAL SUPPORT:
-- If the user speaks Telugu, you MUST reply in Telugu (తెలుగు).
-- If the user speaks Hindi, you MUST reply in Hindi (हिंदी).
-- Always be polite, encouraging, and use a spiritual tone (God bless you, Praise the Lord).`
-        },
-        ...messages
-      ]
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...safeMessages,
+      ],
     });
 
     const stream = OpenAIStream(response as any);
-    return new StreamingTextResponse(stream);
+    return new StreamingTextResponse(stream, { headers: rlHeaders });
 
-  } catch (error) {
-    console.error('Chat error:', error);
+  } catch (error: any) {
+    console.error('[CHAT] OpenRouter error:', error?.message || error);
+
+    // Distinguish between OpenRouter errors and network errors
+    const status = error?.status || 500;
+    const message =
+      status === 401 ? 'AI service authentication failed. Please contact support.' :
+      status === 429 ? 'AI service is busy. Please try again in a moment.' :
+      'I am having trouble connecting right now. Please try again later.';
+
     return new Response(
-      JSON.stringify({ error: 'I apologize, I am having trouble connecting right now. Please try again later.' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
+      JSON.stringify({ error: message }),
+      { status, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }
