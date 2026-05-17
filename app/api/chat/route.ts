@@ -6,19 +6,54 @@ const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY || "",
   defaultHeaders: {
-    "HTTP-Referer": "https://kingdomofchrist.org", // Required by OpenRouter for some models
+    "HTTP-Referer": "https://kingdomofchrist.org",
     "X-Title": "KCM Church Assistant",
   }
 });
 
-// Using Node.js runtime instead of Edge to prevent OpenRouter ECONNRESET connection drops
+// Simple In-Memory Rate Limiter to protect AI tokens
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 10; // Max 10 messages per minute per IP
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const userRate = rateLimitMap.get(ip);
+
+  if (!userRate || now - userRate.lastReset > RATE_LIMIT_WINDOW_MS) {
+    rateLimitMap.set(ip, { count: 1, lastReset: now });
+    return false;
+  }
+  if (userRate.count >= MAX_REQUESTS_PER_WINDOW) {
+    return true;
+  }
+  userRate.count += 1;
+  return false;
+}
 
 export async function POST(req: Request) {
   try {
+    // 1. Rate Limiting Security
+    const ip = req.headers.get("x-forwarded-for") || "unknown-ip";
+    if (isRateLimited(ip)) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please wait a minute before sending more messages." }),
+        { status: 429, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { messages } = await req.json();
 
+    // 2. Payload Validation: Prevent massive context arrays to save tokens
+    if (!messages || !Array.isArray(messages) || messages.length > 20) {
+      return new Response(
+        JSON.stringify({ error: "Invalid conversation history. Conversation too long." }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     const response = await openai.chat.completions.create({
-      model: 'google/gemini-2.0-flash-001', // Upgraded to Gemini 2.0 for superior Telugu/Hindi support
+      model: 'google/gemini-2.0-flash-001', 
       stream: true,
       messages: [
         {

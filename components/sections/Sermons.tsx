@@ -1,10 +1,13 @@
 "use client";
 
 import { Play, Calendar, User, Eye, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { getLatestSermons } from "@/app/actions/sermons";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
-const sermons = [
+// 1. Fallback data in case the database is completely empty (for new setups)
+const fallbackSermons = [
   {
     title: "The Power of Faith",
     pastor: "Pastor John David",
@@ -13,7 +16,7 @@ const sermons = [
     thumbnail: "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=800&q=80",
     duration: "45:30",
     category: "Faith",
-    videoId: "M57yrL-0tSs", // Real working video
+    videoId: "M57yrL-0tSs",
   },
   {
     title: "Walking in Love",
@@ -67,11 +70,45 @@ const sermons = [
   },
 ];
 
-import { useLanguage } from "@/components/providers/LanguageProvider";
-
 export default function Sermons() {
   const { t } = useLanguage();
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  
+  // 2. State to hold our dynamic database sermons
+  const [sermons, setSermons] = useState<any[]>(fallbackSermons);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 3. Fetch from Postgres on component mount
+  useEffect(() => {
+    async function fetchSermonsFromDatabase() {
+      try {
+        const dbSermons = await getLatestSermons();
+        
+        // If the database has actual sermons, format them and use them!
+        if (dbSermons && dbSermons.length > 0) {
+          const formattedSermons = dbSermons.map((s) => ({
+            title: s.title,
+            pastor: s.pastor,
+            date: new Date(s.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            views: s.views >= 1000 ? (s.views / 1000).toFixed(1) + 'K' : s.views.toString(),
+            thumbnail: s.thumbnail || fallbackSermons[0].thumbnail, // Safe fallback for images
+            duration: "45:00", // Defaulting duration as it's not currently in schema
+            category: s.category,
+            // Extract YouTube ID from full URL, or fallback
+            videoId: s.videoUrl?.includes('v=') ? s.videoUrl.split('v=')[1].split('&')[0] : (s.videoUrl || fallbackSermons[0].videoId),
+          }));
+          
+          setSermons(formattedSermons);
+        }
+      } catch (error) {
+        console.error("Failed to load dynamic sermons, defaulting to fallback UI.", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    fetchSermonsFromDatabase();
+  }, []);
 
   return (
     <section id="sermons" className="py-24 bg-white dark:bg-gray-800">
