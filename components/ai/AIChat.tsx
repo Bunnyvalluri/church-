@@ -2,8 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useChat } from "ai/react";
-import { Sparkles, Send, X, MessageCircle, Minimize2 } from "lucide-react";
+import { Send, X, Minimize2, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ReactMarkdown from 'react-markdown';
+import Image from "next/image";
 
 export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,13 +29,11 @@ export default function AIChat() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 p-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-purple-500/50 transition-all duration-300 z-50 group hover-lift animate-bounce-in"
+        className="fixed bottom-6 right-6 p-1 bg-white dark:bg-gray-900 rounded-full shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 z-50 flex items-center justify-center border-2 border-purple-500/20"
       >
-        <Sparkles className="w-6 h-6 animate-pulse" />
-        <span className="absolute -top-1 -right-1 flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
-        </span>
+        <div className="relative w-12 h-12 rounded-full overflow-hidden">
+          <Image src="/chatbot-bird-logo.png" alt="KCM AI Assistant" fill className="object-cover" />
+        </div>
       </button>
     );
   }
@@ -41,38 +41,46 @@ export default function AIChat() {
   return (
     <div
       className={cn(
-        "fixed z-50 transition-all duration-500 ease-in-out",
+        "fixed z-50 transition-all duration-300 ease-in-out shadow-2xl",
         isMinimized
-          ? "bottom-6 right-6 w-72 h-14"
-          : "bottom-6 right-6 w-[90vw] md:w-96 h-[600px] max-h-[80vh]",
+          ? "bottom-6 right-6 w-72 h-[60px]"
+          : "bottom-6 right-6 w-[90vw] md:w-[400px] h-[600px] max-h-[85vh]",
       )}
     >
-      <div className="relative w-full h-full bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col">
+      <div className="relative w-full h-full bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col shadow-2xl">
         {/* Header */}
         <div
-          className="p-4 bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-between cursor-pointer"
+          className="px-5 py-4 bg-gray-900 dark:bg-black border-b border-gray-800 flex items-center justify-between cursor-pointer transition-colors hover:bg-gray-800 dark:hover:bg-gray-900"
           onClick={() => setIsMinimized(!isMinimized)}
         >
-          <div className="flex items-center gap-2 text-white">
-            <Sparkles className="w-5 h-5" />
-            <h3 className="font-bold">Pastor AI Assistant</h3>
+          <div className="flex items-center gap-3 text-white">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-white flex items-center justify-center shrink-0">
+              <Image src="/chatbot-bird-logo.png" alt="Bot" fill className="object-cover" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm leading-tight">KCM Assistant</h3>
+              <p className="text-[10px] text-green-400 font-medium flex items-center gap-1 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                Online
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-white/80">
+          <div className="flex items-center gap-1 text-gray-400">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setIsMinimized(!isMinimized);
               }}
-              className="p-1 hover:bg-white/20 rounded-full transition-colors"
+              className="p-1.5 hover:bg-gray-800 rounded-md transition-colors"
             >
-              <Minimize2 className="w-4 h-4" />
+              {isMinimized ? <ChevronDown className="w-4 h-4 rotate-180" /> : <ChevronDown className="w-4 h-4" />}
             </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setIsOpen(false);
               }}
-              className="p-1 hover:bg-white/20 rounded-full transition-colors"
+              className="p-1.5 hover:bg-gray-800 hover:text-white rounded-md transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -81,78 +89,87 @@ export default function AIChat() {
 
         {!isMinimized && (
           <>
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-800/50" ref={scrollRef}>
-        {messages.length === 0 && (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4 animate-scale-in">
-              <Sparkles className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-            </div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-2">
-              How can I help you today?
-            </h4>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-              Ask me about sermons, prayer requests, or church events.
-            </p>
-            <div className="grid gap-2">
-              <button
-                onClick={() => append({ role: 'user', content: "When is the next service?" })}
-                className="text-sm bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all"
-              >
-                🕒 When is the next service?
-              </button>
-              <button
-                onClick={() => append({ role: 'user', content: "Can you pray for my anxiety?" })}
-                className="text-sm bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all"
-              >
-                🙏 Can you pray for my anxiety?
-              </button>
-            </div>
-          </div>
-        )}
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-gray-50 dark:bg-gray-900" ref={scrollRef}>
+              {messages.length === 0 && (
+                <div className="text-center py-6 mt-4">
+                  <div className="relative w-16 h-16 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                    <Image src="/chatbot-bird-logo.png" alt="Bot" fill className="object-cover" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">
+                    How can I help you today?
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 px-4">
+                    Ask me about service times, locations, prayer requests, or church events.
+                  </p>
+                  
+                  <div className="text-xs text-gray-500 mb-3 uppercase tracking-wider font-semibold">Quick Topics</div>
+                  <div className="flex flex-col gap-2 px-2">
+                    <button
+                      onClick={() => append({ role: 'user', content: "What are the Sunday service timings?" })}
+                      className="text-xs bg-white dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                    >
+                      <span>Sunday service timings?</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                    <button
+                      onClick={() => append({ role: 'user', content: "చర్చి సమయాలు ఏమిటి?" })}
+                      className="text-xs bg-white dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                    >
+                      <span>చర్చి సమయాలు ఏమిటి? (Telugu)</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                    <button
+                      onClick={() => append({ role: 'user', content: "क्या आप मेरे लिए प्रार्थना कर सकते हैं?" })}
+                      className="text-xs bg-white dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                    >
+                      <span>प्रार्थना कर सकते हैं? (Hindi)</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                  </div>
+                </div>
+              )}
 
-        {messages.map((m) => (
+              {messages.map((m) => (
                 <div
                   key={m.id}
                   className={cn(
-                    "flex gap-3 max-w-[85%]",
+                    "flex gap-3 max-w-[90%]",
                     m.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"
                   )}
                 >
                   <div
                     className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                      "relative w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs shadow-sm overflow-hidden",
                       m.role === "user"
-                        ? "bg-purple-100 text-purple-600"
-                        : "bg-indigo-100 text-indigo-600"
+                        ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
+                        : "bg-white"
                     )}
                   >
-                    {m.role === "user" ? (
-                      <div className="w-4 h-4 font-bold">You</div>
-                    ) : (
-                      <Sparkles className="w-4 h-4" />
-                    )}
+                    {m.role === "user" ? "You" : <Image src="/chatbot-bird-logo.png" alt="Bot" fill className="object-cover" />}
                   </div>
                   <div
                     className={cn(
-                      "p-3 rounded-2xl text-sm shadow-sm",
+                      "px-4 py-2.5 rounded-2xl text-sm shadow-sm",
                       m.role === "user"
-                        ? "bg-purple-600 text-white rounded-tr-none"
-                        : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-tl-none border border-gray-100 dark:border-gray-700"
+                        ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-tr-sm"
+                        : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-sm border border-gray-100 dark:border-gray-700 leading-relaxed"
                     )}
                   >
-                    {m.content}
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                       <ReactMarkdown>{m.content}</ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               ))}
 
               {isLoading && (
-                <div className="flex gap-3 mr-auto max-w-[85%] animate-fade-in">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 animate-spin" />
+                <div className="flex gap-3 mr-auto max-w-[85%]">
+                  <div className="relative w-7 h-7 rounded-full bg-white flex items-center justify-center shadow-sm overflow-hidden shrink-0">
+                    <Image src="/chatbot-logo.png" alt="Bot" fill className="object-cover" />
                   </div>
-                  <div className="p-3 rounded-2xl bg-white dark:bg-gray-800 rounded-tl-none border border-gray-100 dark:border-gray-700">
-                    <div className="flex gap-1 h-5 items-center">
+                  <div className="px-4 py-3 rounded-2xl bg-white dark:bg-gray-800 rounded-tl-sm border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div className="flex gap-1.5 h-4 items-center">
                       <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                       <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
                       <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
@@ -163,30 +180,40 @@ export default function AIChat() {
 
               {/* Error State */}
               {!isLoading && messages.length > 0 && messages[messages.length - 1].role === 'user' && (
-                <div className="text-xs text-red-500 px-4 py-2 bg-red-50 dark:bg-red-900/20 rounded-lg mx-4 text-center">
-                  Connection issue. Please try again.
+                <div className="text-xs text-red-600 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 px-3 py-2 rounded-lg mx-auto text-center max-w-[80%]">
+                  Network connection issue. Please try again.
                 </div>
               )}
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-              <form onSubmit={handleSubmit} className="flex gap-2">
-                <input
+            <div className="p-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)]">
+              <form onSubmit={handleSubmit} className="flex gap-2 items-end relative">
+                <textarea
                   value={input}
                   onChange={handleInputChange}
-                  placeholder="Ask something..."
-                  className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 border-0 rounded-full focus:ring-2 focus:ring-purple-500 focus:bg-white dark:focus:bg-gray-800 transition-all text-sm outline-none"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      if (input.trim()) handleSubmit(e as any);
+                    }
+                  }}
+                  placeholder="Type a message..."
+                  className="flex-1 max-h-32 min-h-[44px] px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all text-sm outline-none resize-none"
                   disabled={isLoading}
+                  rows={1}
                 />
                 <button
                   type="submit"
                   disabled={isLoading || !input.trim()}
-                  className="p-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 disabled:opacity-50 disabled:hover:bg-purple-600 transition-colors shadow-md"
+                  className="h-[44px] px-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-100 disabled:opacity-50 disabled:hover:bg-gray-900 transition-colors shadow-sm flex items-center justify-center flex-shrink-0"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4" />
                 </button>
               </form>
+              <div className="text-center mt-2">
+                <span className="text-[10px] text-gray-400">Powered by advanced AI. Responses may vary.</span>
+              </div>
             </div>
           </>
         )}

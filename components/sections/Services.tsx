@@ -4,49 +4,49 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { Music, Users2, Heart, BookHeart, Mic2, Calendar } from "lucide-react";
 
 export default function Services() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const services = [
     {
+      icon: Users2,
+      title: language === 'te' ? "ఉదయం ఆరాధన (వాచ్ టవర్)" : "Worship (Watch Tower)",
+      time: language === 'te' ? "ఆదివారం ఉదయం 5:45" : "Sunday 5:45 AM",
+      description: language === 'te' ? "వాక్యం ద్వారా దేవుని తెలుసుకోవడానికి మా మొదటి ఆరాధనలో చేరండి." : "Join our early morning Watch Tower service to seek God.",
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
       icon: Music,
-      title: t.services.shapur.title,
-      time: t.services.friday + " & " + t.services.sunday,
-      description: t.services.shapur.desc,
+      title: language === 'te' ? "ఆరాధన (సండే సర్వీస్)" : "Worship (Sunday Service)",
+      time: language === 'te' ? "ఆదివారం ఉదయం 8:30" : "Sunday 8:30 AM",
+      description: language === 'te' ? "శక్తివంతమైన ఆరాధన మరియు దేవుని వాక్యాన్ని వినడానికి మాతో చేరండి." : "Join us for powerful worship and the word of God.",
       color: "from-purple-500 to-indigo-500",
     },
     {
       icon: BookHeart,
-      title: t.services.subhash.title,
-      time: t.services.sunday + " Morning",
-      description: t.services.subhash.desc,
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      icon: Users2,
-      title: t.services.subhash.second,
-      time: t.services.sunday + " 8:30 AM",
-      description: t.services.subhash.secondDesc,
+      title: language === 'te' ? "యువజన ఆరాధన (యూత్ సర్వీస్)" : "Worship (Youth Service)",
+      time: language === 'te' ? "ఆదివారం ఉదయం 10:30" : "Sunday 10:30 AM",
+      description: language === 'te' ? "సీనియర్ పాస్టర్ గంగారెడ్డి గారి ప్రత్యేక బైబిల్ ప్రవచనము మరియు సమావేశం." : "Special Sunday service and Bible message by Senior Pastor Gangareddy.",
       color: "from-green-500 to-emerald-500",
     },
     {
-      icon: Heart,
-      title: t.services.bahadur.title,
-      time: t.services.sunday + " Afternoon",
-      description: t.services.bahadur.desc,
+      icon: Mic2,
+      title: language === 'te' ? "ఆరాధన (ప్రేయర్)" : "Worship (Prayer)",
+      time: language === 'te' ? "బుధవారం సా. 6:30" : "Wednesday 6:30 PM",
+      description: language === 'te' ? "మధ్యవార ప్రార్థన కూడిక." : "Mid-week evening prayer meeting.",
       color: "from-yellow-500 to-orange-500",
     },
     {
-      icon: Mic2,
-      title: t.services.subhash.thursday,
-      time: t.services.thursday,
-      description: t.services.subhash.thursdayDesc,
+      icon: Heart,
+      title: language === 'te' ? "హీలింగ్ ఆరాధన" : "Healing Worship",
+      time: language === 'te' ? "ప్రతీ నెల 3వ శుక్రవారం సా. 4:00" : "3rd Friday 4:00 PM",
+      description: language === 'te' ? "దేవుని స్వస్థత శక్తిని అనుభవించండి." : "Experience the healing power of God in this special service.",
       color: "from-pink-500 to-rose-500",
     },
     {
       icon: Calendar,
-      title: t.services.bahadur.tuesday,
-      time: "2nd " + t.services.bahadur.tuesday,
-      description: t.services.bahadur.tuesdayDesc,
+      title: language === 'te' ? "ఉపవాస ప్రార్థన" : "Fasting Prayer",
+      time: language === 'te' ? "ప్రతి గురువారం ఉదయం 7 & 10" : "Thursday 7:00 AM & 10:00 AM",
+      description: language === 'te' ? "ఉపవాస ప్రార్థన ద్వారా ఆత్మీయ బలం. (సంప్రదించండి: 91215 23544)" : "Spiritual strengthening through fasting prayer. (Contact: 91215 23544)",
       color: "from-indigo-500 to-purple-500",
     },
   ];

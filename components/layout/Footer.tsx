@@ -66,8 +66,12 @@ export default function Footer() {
                 </span>
               </div>
             </Link>
-            <p className="text-gray-400 mb-6">
-              {language === 'te' ? "విశ్వాసం మరియు సమాజం కలుసుకునే ప్రదేశం. ఆరాధన, ప్రార్థన మరియు క్రీస్తులో కలిసి ఎదగడంలో మాతో చేరండి." : "A place where faith meets community. Join us in worship, prayer, and growing together in Christ."}
+            <p className="text-gray-400 mb-2">
+              {language === 'te' ? "కాలము సంభవమైయున్నది, దేవునిరాజ్యము సమీపించియున్నది, మారుమనస్సు పొంది సువార్త నమ్ముడి. — మార్కు 1:15" : "“Time is fulfilled, and the Kingdom of God is at hand; repent and believe in the Gospel.” — Mark 1:15"}
+            </p>
+            <p className="text-sm text-purple-400 mb-6 flex items-start gap-2">
+              <MapPin className="h-5 w-5 flex-shrink-0" />
+              <span>H.No. 15-201, Vivekananda Nagar, J.P. Road, Hafeezpet, Hyderabad – 55</span>
             </p>
             {/* Social Links */}
             <div className="flex gap-4">
@@ -175,8 +179,20 @@ export default function Footer() {
             <div className="mt-6 pt-6 border-t border-gray-800">
               <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
                 <Phone className="h-4 w-4 text-purple-400" />
-                <a href="tel:+919640943777" className="hover:text-purple-400 transition-colors">
+                <a href="tel:+919704090069" className="hover:text-purple-400 transition-colors block">
+                  +91 97040 90069
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+                <Phone className="h-4 w-4 opacity-0" />
+                <a href="tel:+919640943777" className="hover:text-purple-400 transition-colors block">
                   +91 96409 43777
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+                <Phone className="h-4 w-4 opacity-0" />
+                <a href="tel:+919505202748" className="hover:text-purple-400 transition-colors block">
+                  +91 95052 02748 (Senior Pastor)
                 </a>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">

@@ -53,13 +53,13 @@ export default function LeadershipPage() {
                   {/* Info */}
                   <div className="flex-1 text-center md:text-left">
                     <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                      Bishop Kurra Kristhu Raju Garu
+                      Senior Pastor Gangareddy (B.Th.)
                     </h3>
                     <p className="text-xl text-purple-600 dark:text-purple-400 mb-6">
                       Senior Pastor & Founder
                     </p>
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                      Bishop Kurra Kristhu Raju Garu has been serving in ministry with unwavering dedication.
+                      Senior Pastor Gangareddy (B.Th.) has been serving in ministry with unwavering dedication.
                       His passion for souls and commitment to God's Word has transformed countless lives
                       across Hyderabad and beyond.
                     </p>
