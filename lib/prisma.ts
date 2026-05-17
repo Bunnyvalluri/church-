@@ -1,16 +1,28 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
+// ── Global type extension for singleton pattern ───────────────────────────────
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
+  prisma: PrismaClient | undefined;
+};
 
+// ── Optimized Prisma Client ───────────────────────────────────────────────────
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
     log:
       process.env.NODE_ENV === 'development'
-        ? ['query', 'warn', 'error']
+        ? ['warn', 'error'] // removed 'query' to reduce console noise
         : ['error'],
-  })
+    errorFormat: 'pretty',
+  });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// ── Prevent multiple instances during hot-reload in dev ──────────────────────
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
+
+// ── Graceful shutdown on process exit ────────────────────────────────────────
+// Ensures Prisma closes DB connections cleanly (avoids connection pool leaks)
+process.on('beforeExit', async () => {
+  await prisma.$disconnect();
+});

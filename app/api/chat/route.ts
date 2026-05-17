@@ -9,7 +9,7 @@ const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
   apiKey: process.env.OPENROUTER_API_KEY || '',
   defaultHeaders: {
-    'HTTP-Referer': 'https://kingdomofchrist.vercel.app',
+    'HTTP-Referer': 'https://church-valluri-rahuls-projects.vercel.app',
     'X-Title': 'KCM Church Assistant',
   },
 });
@@ -17,7 +17,7 @@ const openai = new OpenAI({
 // ── Validation ───────────────────────────────────────────────────────────────
 const messageSchema = z.object({
   role: z.enum(['user', 'assistant', 'system']),
-  content: z.string().min(1).max(2000),
+  content: z.string().min(1).max(4000).trim(), // increased limit for long prayers/scripture
 });
 
 const chatSchema = z.object({
