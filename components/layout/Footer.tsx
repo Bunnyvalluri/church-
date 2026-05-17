@@ -69,10 +69,15 @@ export default function Footer() {
             <p className="text-gray-400 mb-2">
               {language === 'te' ? "కాలము సంభవమైయున్నది, దేవునిరాజ్యము సమీపించియున్నది, మారుమనస్సు పొంది సువార్త నమ్ముడి. — మార్కు 1:15" : "“Time is fulfilled, and the Kingdom of God is at hand; repent and believe in the Gospel.” — Mark 1:15"}
             </p>
-            <p className="text-sm text-purple-400 mb-6 flex items-start gap-2">
+            <a
+              href="https://maps.google.com/?q=Kingdom+of+Christ+Ministries,+15-201,+Vivekananda+Nagar,+Srinivas+Nagar,+Jeedimetla,+Hyderabad,+Telangana+500055"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-purple-400 mb-6 flex items-start gap-2 hover:text-purple-300 transition-colors"
+            >
               <MapPin className="h-5 w-5 flex-shrink-0" />
-              <span>H.No. 15-201, Vivekananda Nagar, J.P. Road, Hafeezpet, Hyderabad – 55</span>
-            </p>
+              <span>Kingdom of Christ Ministries, 15-201, Vivekananda Nagar, Srinivas Nagar, Jeedimetla, Hyderabad – 500055</span>
+            </a>
             {/* Social Links */}
             <div className="flex gap-4">
               <a
