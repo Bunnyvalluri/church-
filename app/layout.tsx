@@ -3,6 +3,8 @@ import { Inter, Outfit } from "next/font/google";
 import "@/app/globals.css";
 import { Providers } from "@/components/providers";
 import AIChat from "@/components/ai/AIChat";
+import SmoothScroll from "@/components/ui/SmoothScroll";
+import BackToTop from "@/components/ui/BackToTop";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -41,7 +43,9 @@ export default function RootLayout({
         </div>
 
         <Providers>
+          <SmoothScroll />
           {children}
+          <BackToTop />
           <AIChat />
         </Providers>
       </body>
