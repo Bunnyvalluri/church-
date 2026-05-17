@@ -72,7 +72,7 @@ export const translations = {
         teachingDesc: "Grow in faith through biblical teaching."
       },
       pastor: "Our Senior Pastor",
-      pastorName: "Senior Pastor Gangareddy (B.Th.)"
+      pastorName: "Bishop Kurra Kristhu Raju"
     },
     events: {
       title: "Upcoming Events",
@@ -177,7 +177,7 @@ export const translations = {
         subtitle: "Shepherds called to serve God's people",
         senior: "Senior Pastor",
         role: "Senior Pastor & Founder",
-        bio: "Senior Pastor Gangareddy (B.Th.) has been serving in ministry with unwavering dedication. His passion for souls and commitment to God's Word has transformed countless lives across Hyderabad and beyond.",
+        bio: "Bishop Kurra Kristhu Raju has been serving in ministry with unwavering dedication. His passion for souls and commitment to God's Word has transformed countless lives across Hyderabad and beyond.",
         visionTitle: "Vision",
         visionQuote: "To build a church where every person experiences God's love, grows in faith, and serves with purpose.",
         teamTitle: "Ministry Leaders",
@@ -488,7 +488,7 @@ export const translations = {
         teachingDesc: "బైబిల్ బోధన ద్వారా విశ్వాసంలో ఎదగండి."
       },
       pastor: "మా సీనియర్ పాస్టర్",
-      pastorName: "సీనియర్ పాస్టర్ గంగారెడ్డి గారు (B.Th.)"
+      pastorName: "బిషప్ కుర్రా క్రీస్తు రాజు గారు"
     },
     events: {
       title: "రాబోయే కార్యక్రమాలు",
@@ -593,7 +593,7 @@ export const translations = {
         subtitle: "దేవుని ప్రజలకు సేవ చేయడానికి పిలువబడిన కాపరులు",
         senior: "సీనియర్ పాస్టర్",
         role: "సీనియర్ పాస్టర్ & వ్యవస్థాపకులు",
-        bio: "సీనియర్ పాస్టర్ గంగారెడ్డి గారు (B.Th.) అత్యంత అంకితభావంతో పరిచర్య చేస్తున్నారు. దేవుని వాక్యం పట్ల వారికున్న ఆసక్తి ని అనేక జీవితాలను మార్చింది.",
+        bio: "బిషప్ కుర్రా క్రీస్తు రాజు గారు అత్యంత అంకితభావంతో పరిచర్య చేస్తున్నారు. దేవుని వాక్యం పట్ల వారికున్న ఆసక్తి ని అనేక జీవితాలను మార్చింది.",
         visionTitle: "దర్శనం",
         visionQuote: "ప్రతి వ్యక్తి దేవుని ప్రేమను అనుభవించే, విశ్వాసంలో ఎదిగే మరియు ఉద్దేశ్యంతో సేవ చేసే చర్చిని నిర్మించడం.",
         teamTitle: "పరిచర్య నాయకులు",

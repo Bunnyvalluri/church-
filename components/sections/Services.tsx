@@ -25,7 +25,7 @@ export default function Services() {
       icon: BookHeart,
       title: language === 'te' ? "యువజన ఆరాధన (యూత్ సర్వీస్)" : "Worship (Youth Service)",
       time: language === 'te' ? "ఆదివారం ఉదయం 10:30" : "Sunday 10:30 AM",
-      description: language === 'te' ? "సీనియర్ పాస్టర్ గంగారెడ్డి గారి ప్రత్యేక బైబిల్ ప్రవచనము మరియు సమావేశం." : "Special Sunday service and Bible message by Senior Pastor Gangareddy.",
+      description: language === 'te' ? "బిషప్ కుర్రా క్రీస్తు రాజు గారి ప్రత్యేక బైబిల్ ప్రవచనము మరియు సమావేశం." : "Special Sunday service and Bible message by Bishop Kurra Kristhu Raju.",
       color: "from-green-500 to-emerald-500",
     },
     {
