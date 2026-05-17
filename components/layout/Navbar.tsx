@@ -63,7 +63,7 @@ export default function Navbar() {
                 src="/logo.png" 
                 alt="Kingdom of Christ Ministries Logo" 
                 fill 
-                className="object-contain p-0.5"
+                className="object-cover rounded-full"
                 priority
               />
             </div>
