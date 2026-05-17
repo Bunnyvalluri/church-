@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Church } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageToggle from "@/components/LanguageToggle";
@@ -57,11 +58,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group perspective">
-            <div className="relative">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-primary via-indigo-500 to-pink-500 text-white shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all duration-500 card-flip">
-                <Church className="h-6 w-6" />
-              </div>
-              <div className="absolute inset-0 bg-primary/20 blur-xl group-hover:bg-primary/40 transition-all duration-500" />
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/20 transition-all duration-500 group-hover:shadow-primary/40 group-hover:scale-105 bg-white flex-shrink-0">
+              <Image 
+                src="/logo.png" 
+                alt="Kingdom of Christ Ministries Logo" 
+                fill 
+                className="object-contain p-0.5"
+                priority
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-black text-xl leading-tight text-foreground tracking-tight drop-shadow-sm">

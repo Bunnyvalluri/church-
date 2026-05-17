@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   description: "Welcome to Kingdom of Christ Ministries - A place of worship, prayer, and community in Jeedimetla, Hyderabad. Join us for services, events, and spiritual growth.",
   keywords: ["church", "ministry", "worship", "prayer", "Hyderabad", "Jeedimetla", "Kingdom of Christ"],
   authors: [{ name: "Kingdom of Christ Ministries" }],
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     title: "Kingdom of Christ Ministries",
     description: "A place of worship and community in Hyderabad",

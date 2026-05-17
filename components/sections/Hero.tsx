@@ -1,12 +1,32 @@
 "use client";
 
-import { ArrowRight, Calendar, Users, Heart, Sparkles } from "lucide-react";
+import { ArrowRight, Calendar, Users, Heart, Sparkles, Cross } from "lucide-react";
 import Link from "next/link";
-
+import { motion } from "framer-motion";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function Hero() {
   const { t } = useLanguage();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 50, damping: 15 },
+    },
+  };
 
   return (
     <section
@@ -15,87 +35,121 @@ export default function Hero() {
     >
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.05] dark:opacity-10" />
-        {/* Colorful Floating orbs (Local to Hero for extra vibrancy) */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400 to-emerald-400 rounded-full blur-[100px] animate-float opacity-40 mix-blend-multiply dark:mix-blend-screen" />
-        <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-[100px] animate-float-delayed opacity-40 mix-blend-multiply dark:mix-blend-screen" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] dark:opacity-5" />
+        {/* Colorful Floating orbs tailored to the brand (Purple/Gold) */}
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], x: [0, 50, 0], y: [0, 30, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-10 left-[-10%] w-[40rem] h-[40rem] bg-gradient-to-r from-purple-600/30 to-indigo-600/30 rounded-full blur-[120px] mix-blend-screen" 
+        />
+        <motion.div 
+          animate={{ scale: [1, 1.1, 1], x: [0, -40, 0], y: [0, -50, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-[-10%] right-[-5%] w-[35rem] h-[35rem] bg-gradient-to-r from-amber-500/20 to-orange-400/20 rounded-full blur-[120px] mix-blend-screen" 
+        />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-32">
-        <div className="max-w-4xl mx-auto text-center">
+      <div className="relative z-10 container mx-auto px-4 py-32 mt-16">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-5xl mx-auto text-center"
+        >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/50 dark:border-white/10 rounded-full text-foreground mb-8 animate-bounce-in shadow-xl shadow-purple-500/10">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="font-semibold tracking-wide">{t.hero.prayerBoxSub}</span>
-            <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
-          </div>
+          <motion.div variants={itemVariants} className="flex justify-center mb-8">
+            <div className="inline-flex items-center gap-2 px-6 py-2.5 bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-full text-foreground shadow-2xl shadow-amber-500/10 hover:border-amber-500/30 transition-colors duration-300">
+              <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
+              <span className="font-medium tracking-wide text-sm md:text-base">{t.hero.prayerBoxSub}</span>
+              <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
+            </div>
+          </motion.div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-foreground mb-6 animate-fade-in-up tracking-tight drop-shadow-sm">
+          <motion.h1 
+            variants={itemVariants}
+            className="text-6xl md:text-8xl lg:text-[6rem] font-black text-foreground mb-6 tracking-tighter leading-[1.1] drop-shadow-sm font-outfit"
+          >
             {t.hero.welcome}{" "}
-            <span className="block mt-4 bg-gradient-to-r from-primary via-pink-500 to-indigo-500 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%] pb-2">
-              Kingdom of Christ Ministries
+            <span className="block mt-2 bg-gradient-to-r from-purple-600 via-amber-500 to-indigo-600 bg-clip-text text-transparent pb-2 bg-[length:200%_auto] animate-shimmer">
+              Kingdom of Christ
             </span>
-          </h1>
+          </motion.h1>
 
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto animate-fade-in-up animate-delay-200 leading-relaxed font-medium">
+          <motion.p 
+            variants={itemVariants}
+            className="text-lg md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
+          >
             {t.hero.subtitle}
-          </p>
+          </motion.p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-5 justify-center mb-16 animate-scale-in animate-delay-300">
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-5 justify-center mb-24">
             <Link
               href="#events"
-              className="group px-8 py-4 bg-gradient-to-r from-primary to-indigo-600 text-white rounded-2xl font-bold hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:scale-[1.05] flex items-center justify-center gap-3 hover-lift border border-white/10"
+              className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full font-bold overflow-hidden shadow-2xl shadow-purple-500/25 transition-all hover:scale-105"
             >
-              {t.nav.events}
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-white/20 group-hover:translate-x-full -translate-x-full transition-transform duration-500 ease-out skew-x-12" />
+              <span className="relative flex items-center justify-center gap-2">
+                {t.nav.events}
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </span>
             </Link>
             <Link
               href="#contact"
-              className="px-8 py-4 bg-white/50 dark:bg-black/40 backdrop-blur-xl border-2 border-white/50 dark:border-white/10 text-foreground rounded-2xl font-bold hover:bg-white/70 dark:hover:bg-white/10 transition-all duration-300 hover:scale-[1.05] hover-lift"
+              className="px-8 py-4 bg-white/5 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 text-foreground rounded-full font-bold hover:bg-gray-50 dark:hover:bg-white/10 transition-all hover:scale-105"
             >
               {t.hero.ctaPrimary}
             </Link>
-          </div>
+          </motion.div>
 
           {/* Stats - Staggered Animation */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto stagger-children perspective">
-            <div className="bg-white/60 dark:bg-black/40 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-3xl p-8 hover:bg-white/80 dark:hover:bg-white/10 transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 card-flip shadow-2xl shadow-primary/5">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-300 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-500/30">
-                <Users className="h-8 w-8 text-white animate-bounce-in" />
-              </div>
-              <div className="text-4xl font-black text-foreground mb-2 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">1000+</div>
-              <div className="text-muted-foreground font-semibold uppercase tracking-wider text-sm">Active Members</div>
-            </div>
-            
-            <div className="bg-white/60 dark:bg-black/40 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-3xl p-8 hover:bg-white/80 dark:hover:bg-white/10 transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 card-flip shadow-2xl shadow-primary/5">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-teal-500/30">
-                <Calendar className="h-8 w-8 text-white animate-bounce-in animate-delay-100" />
-              </div>
-              <div className="text-4xl font-black text-foreground mb-2 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">50+</div>
-              <div className="text-muted-foreground font-semibold uppercase tracking-wider text-sm">Events Yearly</div>
-            </div>
-
-            <div className="bg-white/60 dark:bg-black/40 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-3xl p-8 hover:bg-white/80 dark:hover:bg-white/10 transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 card-flip shadow-2xl shadow-primary/5">
-              <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-rose-500/30">
-                <Heart className="h-8 w-8 text-white animate-bounce-in animate-delay-200" />
-              </div>
-              <div className="text-4xl font-black text-foreground mb-2 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">24/7</div>
-              <div className="text-muted-foreground font-semibold uppercase tracking-wider text-sm">Prayer Support</div>
-            </div>
-          </div>
-        </div>
+          <motion.div 
+            variants={containerVariants}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+          >
+            {[
+              { icon: Users, count: "1000+", label: "Active Members", color: "from-purple-500 to-indigo-500", shadow: "shadow-purple-500/20" },
+              { icon: Calendar, count: "50+", label: "Events Yearly", color: "from-amber-400 to-orange-500", shadow: "shadow-amber-500/20" },
+              { icon: Heart, count: "24/7", label: "Prayer Support", color: "from-rose-400 to-red-500", shadow: "shadow-rose-500/20" }
+            ].map((stat, i) => (
+              <motion.div 
+                key={i}
+                variants={itemVariants}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="relative group rounded-3xl p-[1px] bg-gradient-to-b from-white/40 to-white/10 dark:from-white/10 dark:to-transparent"
+              >
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10 bg-white/5 dark:bg-white/5" />
+                <div className="bg-white/40 dark:bg-black/40 backdrop-blur-xl rounded-3xl p-8 h-full border border-white/20 dark:border-white/5 shadow-2xl shadow-black/5 flex flex-col items-center">
+                  <div className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg ${stat.shadow} group-hover:scale-110 transition-transform duration-300`}>
+                    <stat.icon className="h-7 w-7 text-white" />
+                  </div>
+                  <div className="text-4xl font-black text-foreground mb-1 font-outfit">{stat.count}</div>
+                  <div className="text-muted-foreground font-semibold uppercase tracking-widest text-xs">{stat.label}</div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-primary/40 rounded-full flex items-start justify-center p-2 backdrop-blur-md bg-white/20 dark:bg-black/20">
-          <div className="w-1.5 h-3 bg-primary rounded-full animate-pulse" />
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <div className="w-6 h-10 border-2 border-foreground/20 rounded-full flex items-start justify-center p-1 backdrop-blur-sm">
+          <motion.div 
+            animate={{ y: [0, 12, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="w-1.5 h-1.5 bg-foreground/50 rounded-full" 
+          />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

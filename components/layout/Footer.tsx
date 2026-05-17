@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { Church, Facebook, Instagram, Youtube, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Instagram, Youtube, Twitter, Mail, Phone, MapPin } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function Footer() {
@@ -47,8 +48,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center space-x-2 mb-6">
-              <Church className="h-8 w-8 text-purple-400" />
+            <Link href="/" className="flex items-center space-x-3 mb-6">
+              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-purple-500/30 bg-white flex-shrink-0">
+                <Image 
+                  src="/logo.png" 
+                  alt="Kingdom of Christ Ministries Logo" 
+                  fill 
+                  className="object-contain p-0.5"
+                />
+              </div>
               <div className="flex flex-col">
                 <span className="font-bold text-lg leading-tight text-white">
                   Kingdom of Christ
@@ -67,7 +75,7 @@ export default function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#1877F2]/40 hover:brightness-110"
               >
                 <Facebook className="h-5 w-5" />
               </a>
@@ -75,7 +83,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-pink-500/40 hover:brightness-110"
               >
                 <Instagram className="h-5 w-5" />
               </a>
@@ -83,7 +91,7 @@ export default function Footer() {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-[#FF0000] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#FF0000]/40 hover:brightness-110"
               >
                 <Youtube className="h-5 w-5" />
               </a>
@@ -91,7 +99,7 @@ export default function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#1DA1F2]/40 hover:brightness-110"
               >
                 <Twitter className="h-5 w-5" />
               </a>
