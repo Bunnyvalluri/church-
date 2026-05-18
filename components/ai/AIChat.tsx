@@ -8,8 +8,13 @@ import ReactMarkdown from 'react-markdown';
 import Image from "next/image";
 
 export default function AIChat() {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Vercel AI SDK hook
   const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
@@ -24,6 +29,8 @@ export default function AIChat() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  if (!mounted) return null;
 
   if (!isOpen) {
     return (
@@ -104,27 +111,48 @@ export default function AIChat() {
                   </p>
                   
                   <div className="text-xs text-gray-500 mb-3 uppercase tracking-wider font-semibold">Quick Topics</div>
-                  <div className="flex flex-col gap-2 px-2">
+                  <div className="grid grid-cols-2 gap-2 px-2">
                     <button
                       onClick={() => append({ role: 'user', content: "What are the Sunday service timings?" })}
-                      className="text-xs bg-white dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                      className="text-xs bg-white dark:bg-gray-800 px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
                     >
-                      <span>Sunday service timings?</span>
-                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="truncate">Sunday service timings?</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
+                    </button>
+                    <button
+                      onClick={() => append({ role: 'user', content: "Where is the church located?" })}
+                      className="text-xs bg-white dark:bg-gray-800 px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                    >
+                      <span className="truncate">Where is KCM located?</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
+                    </button>
+                    <button
+                      onClick={() => append({ role: 'user', content: "Who is the Senior Pastor?" })}
+                      className="text-xs bg-white dark:bg-gray-800 px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                    >
+                      <span className="truncate">Who is Senior Pastor?</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
+                    </button>
+                    <button
+                      onClick={() => append({ role: 'user', content: "How can I submit a prayer request?" })}
+                      className="text-xs bg-white dark:bg-gray-800 px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                    >
+                      <span className="truncate">Submit prayer request?</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
                     </button>
                     <button
                       onClick={() => append({ role: 'user', content: "చర్చి సమయాలు ఏమిటి?" })}
-                      className="text-xs bg-white dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                      className="text-xs bg-white dark:bg-gray-800 px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
                     >
-                      <span>చర్చి సమయాలు ఏమిటి? (Telugu)</span>
-                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="truncate">చర్చి సమయాలు? (Telugu)</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
                     </button>
                     <button
                       onClick={() => append({ role: 'user', content: "क्या आप मेरे लिए प्रार्थना कर सकते हैं?" })}
-                      className="text-xs bg-white dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
+                      className="text-xs bg-white dark:bg-gray-800 px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-sm text-left transition-all text-gray-700 dark:text-gray-300 flex items-center justify-between group"
                     >
-                      <span>प्रार्थना कर सकते हैं? (Hindi)</span>
-                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="truncate">प्रार्थना कर सकते हैं? (Hindi)</span>
+                      <Send className="w-3 h-3 text-gray-400 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
                     </button>
                   </div>
                 </div>
@@ -166,7 +194,7 @@ export default function AIChat() {
               {isLoading && (
                 <div className="flex gap-3 mr-auto max-w-[85%]">
                   <div className="relative w-7 h-7 rounded-full bg-white flex items-center justify-center shadow-sm overflow-hidden shrink-0">
-                    <Image src="/chatbot-logo.png" alt="Bot" fill className="object-cover" />
+                    <Image src="/chatbot-bird-logo.png" alt="Bot" fill className="object-cover" />
                   </div>
                   <div className="px-4 py-3 rounded-2xl bg-white dark:bg-gray-800 rounded-tl-sm border border-gray-100 dark:border-gray-700 shadow-sm">
                     <div className="flex gap-1.5 h-4 items-center">

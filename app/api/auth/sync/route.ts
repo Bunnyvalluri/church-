@@ -31,12 +31,55 @@ export async function POST(req: Request) {
 
       return NextResponse.json({ success: true, user });
     } catch (dbError: any) {
-      console.warn('[AUTH/SYNC] Prisma database sync skipped/failed:', dbError?.message || dbError);
-      return NextResponse.json({
-        success: false,
-        warning: 'Database offline or not migrated. User authenticated on client only.',
-        details: dbError?.message || String(dbError),
-      });
+      console.warn('[AUTH/SYNC] Database unavailable (Prisma/DB offline). Using local file fallback. Details:', dbError?.message || dbError);
+
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const fallbackDir = path.join(process.cwd(), 'prisma');
+        const fallbackFile = path.join(fallbackDir, 'fallback_users.json');
+        
+        let users = [];
+        if (fs.existsSync(fallbackFile)) {
+          try {
+            users = JSON.parse(fs.readFileSync(fallbackFile, 'utf-8'));
+          } catch {}
+        }
+        
+        // Remove existing fallback user with same email to mock upsert
+        users = users.filter((u: any) => u.email !== email);
+        
+        const fallbackUser = {
+          id: uid,
+          email,
+          name: name || 'Member',
+          image: photoURL || null,
+          phone: phoneNumber || null,
+          role: 'MEMBER',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        users.push(fallbackUser);
+        
+        if (!fs.existsSync(fallbackDir)) {
+          fs.mkdirSync(fallbackDir, { recursive: true });
+        }
+        fs.writeFileSync(fallbackFile, JSON.stringify(users, null, 2), 'utf-8');
+        console.info(`[AUTH/SYNC/FALLBACK] ✅ Synced user ${email} locally in prisma/fallback_users.json`);
+
+        return NextResponse.json({
+          success: true,
+          user: fallbackUser,
+          warning: 'Database offline or not migrated. User saved to local fallback file.',
+        });
+      } catch (fsErr) {
+        console.error('[AUTH/SYNC] ❌ Local fallback failed:', fsErr);
+        return NextResponse.json({
+          success: false,
+          warning: 'Database offline and local fallback failed. User authenticated on client only.',
+          details: dbError?.message || String(dbError),
+        });
+      }
     }
   } catch (err: any) {
     console.error('[AUTH/SYNC] Parsing/internal error:', err);

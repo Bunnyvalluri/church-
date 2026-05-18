@@ -103,16 +103,48 @@ export async function POST(req: Request) {
     );
   } catch (dbError: unknown) {
     const msg = dbError instanceof Error ? dbError.message : String(dbError);
-    const isTimeout = msg.includes("timeout");
+    console.warn(`[CONTACT] Database unavailable (Prisma/DB offline). Using local file fallback. Details:`, msg);
 
-    console.error(`[CONTACT] ❌ DB ${isTimeout ? "timeout" : "error"}:`, msg);
-
-    return err(
-      isTimeout
-        ? "The server is temporarily busy. Please try again in a moment."
-        : "We received your request but encountered a server issue. Our team has been notified.",
-      isTimeout ? 503 : 500
-    );
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const fallbackDir = path.join(process.cwd(), 'prisma');
+      const fallbackFile = path.join(fallbackDir, 'fallback_messages.json');
+      
+      let messages = [];
+      if (fs.existsSync(fallbackFile)) {
+        try {
+          messages = JSON.parse(fs.readFileSync(fallbackFile, 'utf-8'));
+        } catch {}
+      }
+      
+      const newMsg = {
+        id: `fallback-${Date.now()}`,
+        ...safeData,
+        createdAt: new Date().toISOString(),
+      };
+      messages.push(newMsg);
+      
+      if (!fs.existsSync(fallbackDir)) {
+        fs.mkdirSync(fallbackDir, { recursive: true });
+      }
+      fs.writeFileSync(fallbackFile, JSON.stringify(messages, null, 2), 'utf-8');
+      console.info(`[CONTACT/FALLBACK] ✅ Saved message #${newMsg.id} locally in prisma/fallback_messages.json`);
+      
+      return ok(
+        { 
+          message: "Your message has been received. We will get back to you soon!",
+          note: "Saved locally (DB connection offline)" 
+        },
+        201
+      );
+    } catch (fsErr) {
+      console.error(`[CONTACT] ❌ Local fallback also failed:`, fsErr);
+      return err(
+        "We are temporarily unable to process your request. Please try again later.",
+        500
+      );
+    }
   }
 }
 

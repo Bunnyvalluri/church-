@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider, facebookProvider, twitterProvider } from "@/lib/firebase";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ChevronLeft } from "lucide-react";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { mounted, status } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -17,12 +18,18 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
+  // Instantly redirect if already authenticated
+  useEffect(() => {
+    if (mounted && status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [mounted, status, router]);
+
   const handleSocialLogin = async (provider: any, name: string) => {
     setSocialLoading(name);
     setError("");
     try {
       await signInWithPopup(auth, provider);
-      router.push("/dashboard");
     } catch (err: any) {
       console.error(`${name} Sign-in Error:`, err);
       setError(`${name} sign-in failed. Please try again.`);
@@ -37,7 +44,6 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/dashboard");
     } catch (err: any) {
       const messages: Record<string, string> = {
         "auth/invalid-credential": "Invalid email or password. Please try again.",

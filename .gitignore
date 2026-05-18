@@ -38,3 +38,11 @@ next-env.d.ts
 
 # prisma
 /prisma/migrations
+
+# local fallbacks
+/prisma/fallback_*.json
+/prisma/dev.db
+/prisma/dev.db-journal
+
+# agent reports
+eslint-report*.txt

@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 
 export default function SmoothScroll() {
+  const [mounted, setMounted] = useState(false);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001,
   });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Smooth scroll for all anchor links
   useEffect(() => {
@@ -30,6 +35,8 @@ export default function SmoothScroll() {
     document.addEventListener("click", handleAnchorClick);
     return () => document.removeEventListener("click", handleAnchorClick);
   }, []);
+
+  if (!mounted) return null;
 
   return (
     <>

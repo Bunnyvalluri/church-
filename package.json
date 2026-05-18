@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.15",
+    "@google/generative-ai": "^0.24.1",
     "@langchain/community": "^0.0.45",
     "@langchain/openai": "^0.0.25",
     "@pinecone-database/pinecone": "^2.1.0",

@@ -111,15 +111,15 @@ export default function Sermons() {
   }, []);
 
   return (
-    <section id="sermons" className="py-24 bg-white dark:bg-gray-800">
-      <div className="container mx-auto px-4">
+    <section id="sermons" className="py-24 bg-white dark:bg-transparent relative z-10 transition-colors duration-300">
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white tracking-tight">
             {t.sermons.title.split(" ")[0]}{" "}
             <span className="text-gradient">{t.sermons.title.split(" ").slice(1).join(" ")}</span>
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-slate-600 dark:text-white/70">
             {t.sermons.subtitle}
           </p>
         </div>
@@ -129,7 +129,7 @@ export default function Sermons() {
           {sermons.map((sermon, index) => (
             <div
               key={index}
-              className="group bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200 dark:border-gray-700"
+              className="group bg-slate-50 dark:bg-white/[0.02] rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] dark:hover:shadow-2xl dark:hover:shadow-purple-500/10 transition-all duration-500 hover:-translate-y-2 border border-slate-100 dark:border-white/[0.05] dark:backdrop-blur-3xl"
             >
               {/* Thumbnail */}
               <div
@@ -160,13 +160,13 @@ export default function Sermons() {
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+              <div className="p-6 md:p-8">
+                <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white tracking-tight group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
                   {sermon.title}
                 </h3>
 
                 {/* Meta Info */}
-                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                <div className="space-y-3 text-sm text-slate-600 dark:text-white/70 font-medium">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-purple-600" />
                     <span>{sermon.pastor}</span>
@@ -200,7 +200,7 @@ export default function Sermons() {
         <div className="mt-16 text-center">
           <a
             href="/sermons"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+            className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-white/10 dark:to-white/5 dark:backdrop-blur-xl dark:border dark:border-white/10 dark:hover:bg-white/20 text-white rounded-2xl font-bold tracking-wide shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
           >
             {t.sermons.viewAll}
           </a>

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, ChevronLeft, CheckCircle2 } from "lucide-react";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const passwordStrength = (pw: string) => {
   let score = 0;
@@ -21,6 +22,7 @@ const strengthColor = ["bg-gray-200", "bg-red-500", "bg-orange-400", "bg-yellow-
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { mounted, status } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -33,6 +35,13 @@ export default function RegisterPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (mounted && status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [mounted, status, router]);
 
   const pwScore = passwordStrength(formData.password);
 
@@ -61,7 +70,6 @@ export default function RegisterPage() {
           displayName: `${formData.firstName} ${formData.lastName}`.trim(),
         });
       }
-      router.push("/dashboard");
     } catch (err: any) {
       const messages: Record<string, string> = {
         "auth/email-already-in-use": "This email is already registered. Try signing in.",

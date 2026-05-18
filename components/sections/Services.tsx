@@ -52,14 +52,14 @@ export default function Services() {
   ];
 
   return (
-    <section id="services" className="py-24 bg-white dark:bg-gray-800">
-      <div className="container mx-auto px-4">
+    <section id="services" className="py-24 bg-white dark:bg-transparent relative z-10 transition-colors duration-300">
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white tracking-tight">
             {t.services.title}
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-slate-600 dark:text-white/70">
             {t.services.subtitle}
           </p>
         </div>
@@ -71,7 +71,7 @@ export default function Services() {
             return (
               <div
                 key={index}
-                className="group relative bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200 dark:border-gray-700 overflow-hidden"
+                className="group relative bg-slate-50 dark:bg-white/[0.02] rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] dark:hover:shadow-2xl dark:hover:shadow-purple-500/10 transition-all duration-500 hover:-translate-y-2 border border-slate-100 dark:border-white/[0.05] dark:backdrop-blur-3xl overflow-hidden"
               >
                 {/* Background Gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
@@ -82,7 +82,7 @@ export default function Services() {
                     <Icon className="h-8 w-8 text-white" />
                   </div>
 
-                  <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
+                  <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white tracking-tight group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
                     {service.title}
                   </h3>
 
@@ -90,7 +90,7 @@ export default function Services() {
                     {service.time}
                   </div>
 
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <p className="text-slate-600 dark:text-white/70 leading-relaxed">
                     {service.description}
                   </p>
                 </div>
@@ -101,12 +101,12 @@ export default function Services() {
 
         {/* CTA */}
         <div className="mt-16 text-center">
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+          <p className="text-lg text-slate-600 dark:text-white/70 mb-8 max-w-2xl mx-auto">
             {t.services.ctaDesc}
           </p>
           <a
             href="#contact"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+            className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-white/10 dark:to-white/5 dark:backdrop-blur-xl dark:border dark:border-white/10 dark:hover:bg-white/20 text-white rounded-2xl font-bold tracking-wide shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
           >
             {t.services.cta}
           </a>

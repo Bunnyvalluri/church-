@@ -40,7 +40,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gray-900 text-gray-300 border-t border-white/5">
+    <footer className="relative bg-slate-950 dark:bg-black/40 dark:backdrop-blur-2xl text-slate-300 border-t border-white/10 dark:border-white/5">
       {/* Gradient Top Border */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500" />
       {/* Main Footer */}

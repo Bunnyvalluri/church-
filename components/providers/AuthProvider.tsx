@@ -14,6 +14,7 @@ export interface AuthUser {
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
+  mounted: boolean;
   status: "loading" | "authenticated" | "unauthenticated";
   logout: () => Promise<void>;
 }
@@ -21,6 +22,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  mounted: false,
   status: "loading",
   logout: async () => {},
 });
@@ -29,9 +31,7 @@ async function syncUserToDatabase(firebaseUser: FirebaseUser) {
   try {
     const response = await fetch("/api/auth/sync", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -43,8 +43,6 @@ async function syncUserToDatabase(firebaseUser: FirebaseUser) {
     const result = await response.json();
     if (!response.ok) {
       console.warn("[AUTH] Server sync failed:", result.error);
-    } else {
-      console.log("[AUTH] Server sync succeeded:", result);
     }
   } catch (error) {
     console.error("[AUTH] Server sync network error:", error);
@@ -54,10 +52,13 @@ async function syncUserToDatabase(firebaseUser: FirebaseUser) {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  // mounted=true only after first client render — prevents hydration mismatch
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setLoading(true);
       if (firebaseUser) {
         const mappedUser: AuthUser = {
           uid: firebaseUser.uid,
@@ -67,8 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         setUser(mappedUser);
         setLoading(false);
-
-        // Run user sync in the background so it doesn't block the UI
+        // Sync in background — non-blocking
         syncUserToDatabase(firebaseUser);
       } else {
         setUser(null);
@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const status = loading ? "loading" : user ? "authenticated" : "unauthenticated";
 
   return (
-    <AuthContext.Provider value={{ user, loading, status, logout }}>
+    <AuthContext.Provider value={{ user, loading, mounted, status, logout }}>
       {children}
     </AuthContext.Provider>
   );

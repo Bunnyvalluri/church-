@@ -1,33 +1,21 @@
-import { OpenAIStream, StreamingTextResponse } from 'ai';
-import OpenAI from 'openai';
-import { z } from 'zod';
 import { isRateLimited, rateLimitHeaders } from '@/lib/rateLimit';
 import { getClientIp, safeJson } from '@/lib/apiResponse';
+import { z } from 'zod';
 
-// ── OpenRouter client ────────────────────────────────────────────────────────
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY || '',
-  defaultHeaders: {
-    'HTTP-Referer': 'https://church-valluri-rahuls-projects.vercel.app',
-    'X-Title': 'KCM Church Assistant',
-  },
-});
-
-// ── Validation ───────────────────────────────────────────────────────────────
+// ── Validation ────────────────────────────────────────────────────────────────
 const messageSchema = z.object({
   role: z.enum(['user', 'assistant', 'system']),
-  content: z.string().min(1).max(4000).trim(), // increased limit for long prayers/scripture
+  content: z.string().min(1).max(4000).trim(),
 });
 
 const chatSchema = z.object({
   messages: z.array(messageSchema).min(1).max(20),
 });
 
-// ── Rate limit config ────────────────────────────────────────────────────────
-const RL_OPTS = { windowMs: 60_000, maxRequests: 10 };
+// ── Rate limit config ─────────────────────────────────────────────────────────
+const RL_OPTS = { windowMs: 60_000, maxRequests: 15 };
 
-// ── KCM System Prompt ────────────────────────────────────────────────────────
+// ── KCM System Prompt ─────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are a helpful, spiritual, and welcoming assistant for Kingdom of Christ Ministries (KCM), a Christian church in Hyderabad, India.
 
 CHURCH DETAILS:
@@ -53,11 +41,11 @@ Monthly:
   • 1st Sunday           — Water Baptism Service
 
 GUIDELINES:
-- Be warm, spiritual, and encouraging in every response
-- Use phrases like "Praise the Lord", "God bless you", "Hallelujah" naturally
-- Keep answers concise but complete
-- For prayer requests, offer a short prayer or blessing
-- Do NOT make up information not listed above
+- Be warm, spiritual, and welcoming in every response.
+- Use phrases like "Praise the Lord", "God bless you", "Hallelujah" naturally.
+- Keep answers extremely short, direct, and under 2-3 sentences max. Answer user questions instantly and avoid verbose descriptions so answers are quick to read.
+- For prayer requests, offer a very short 1-sentence prayer or blessing.
+- Do NOT make up information not listed above.
 - If you don't know something, say "Please contact us at 97040 90069"
 
 MULTILINGUAL:
@@ -67,7 +55,7 @@ MULTILINGUAL:
 - If English → reply in English
 - Mix languages only if the user mixes them`;
 
-// ── POST /api/chat ────────────────────────────────────────────────────────────
+// ── POST /api/chat ─────────────────────────────────────────────────────────────
 export async function POST(req: Request) {
   // 1. Rate limiting
   const ip = getClientIp(req);
@@ -89,7 +77,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // 3. Validate message shape
+  // 3. Validate
   const parsed = chatSchema.safeParse(body);
   if (!parsed.success) {
     return new Response(
@@ -99,39 +87,108 @@ export async function POST(req: Request) {
   }
 
   const { messages } = parsed.data;
-
-  // 4. Filter out any injected system messages from client (security)
   const safeMessages = messages.filter((m) => m.role !== 'system');
 
-  // 5. Call AI with streaming
   try {
-    const response = await openai.chat.completions.create({
-      model: 'google/gemini-2.0-flash-001',
-      stream: true,
-      max_tokens: 800,
-      temperature: 0.7,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...safeMessages,
-      ],
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      throw new Error('API_KEY missing');
+    }
+
+    // 4. Call OpenRouter with streaming enabled
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...safeMessages,
+        ],
+        max_tokens: 1000,
+        stream: true,
+      }),
     });
 
-    const stream = OpenAIStream(response as any);
-    return new StreamingTextResponse(stream, { headers: rlHeaders });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`OpenRouter returned status ${response.status}: ${errText}`);
+    }
+
+    // 5. Stream the response back in Vercel AI SDK format
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+    const encoder = new TextEncoder();
+
+    let buffer = '';
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        if (!reader) {
+          controller.close();
+          return;
+        }
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed) continue;
+              if (trimmed === 'data: [DONE]') continue;
+
+              if (trimmed.startsWith('data: ')) {
+                const jsonStr = trimmed.slice(6);
+                try {
+                  const data = JSON.parse(jsonStr);
+                  const delta = data.choices?.[0]?.delta?.content;
+                  if (delta) {
+                    controller.enqueue(encoder.encode(`0:${JSON.stringify(delta)}\n`));
+                  }
+                } catch (e) {
+                  console.error('[CHAT] Error parsing SSE line:', trimmed, e);
+                }
+              }
+            }
+          }
+
+          // Signal end of stream
+          controller.enqueue(encoder.encode(`d:{"finishReason":"stop"}\n`));
+          controller.close();
+        } catch (err) {
+          controller.error(err);
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-Vercel-AI-Data-Stream': 'v1',
+        ...rlHeaders,
+      },
+    });
 
   } catch (error: any) {
     console.error('[CHAT] OpenRouter error:', error?.message || error);
 
-    // Distinguish between OpenRouter errors and network errors
-    const status = error?.status || 500;
     const message =
-      status === 401 ? 'AI service authentication failed. Please contact support.' :
-      status === 429 ? 'AI service is busy. Please try again in a moment.' :
+      error?.message?.includes('API_KEY') ? 'AI service configuration error. Please contact support.' :
+      error?.message?.includes('quota') || error?.message?.includes('credits') ? 'AI service is busy. Please try again in a moment.' :
       'I am having trouble connecting right now. Please try again later.';
 
     return new Response(
       JSON.stringify({ error: message }),
-      { status, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }

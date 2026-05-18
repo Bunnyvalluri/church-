@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic";
+
 import Hero from "@/components/sections/Hero";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import About from "@/components/sections/About";
@@ -8,8 +8,7 @@ import Sermons from "@/components/sections/Sermons";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/layout/Footer";
 
-const Navbar = dynamic(() => import("@/components/layout/Navbar"), { ssr: false });
-const AIChat = dynamic(() => import("@/components/ai/AIChat"), { ssr: false }); // Chat is client-only interactive
+import Navbar from "@/components/layout/Navbar";
 
 export default function Home() {
   return (
@@ -22,7 +21,6 @@ export default function Home() {
       <ScrollReveal delay={0.1}><Sermons /></ScrollReveal>
       <ScrollReveal delay={0.1}><Contact /></ScrollReveal>
       <Footer />
-      <AIChat />
     </main>
   );
 }

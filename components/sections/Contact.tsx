@@ -46,15 +46,15 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-gray-50 dark:bg-gray-900">
+    <section id="contact" className="py-24 bg-slate-50 dark:bg-transparent relative z-10 transition-colors duration-300">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white tracking-tight">
             Get in{" "}
             <span className="text-gradient">Touch</span>
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-slate-600 dark:text-white/70">
             Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll
             respond as soon as possible.
           </p>
@@ -63,8 +63,8 @@ export default function Contact() {
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Info */}
           <div className="space-y-8">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-              <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+            <div className="bg-white dark:bg-white/[0.02] rounded-3xl p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/[0.05] dark:backdrop-blur-3xl">
+              <h3 className="text-2xl font-bold mb-8 text-slate-900 dark:text-white tracking-tight">
                 Contact Information
               </h3>
 
@@ -74,14 +74,14 @@ export default function Contact() {
                     <MapPin className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1">
                       Address
                     </h4>
                     <a
                       href="https://maps.google.com/?q=Kingdom+of+Christ+Ministries,+15-201,+Vivekananda+Nagar,+Srinivas+Nagar,+Jeedimetla,+Hyderabad,+Telangana+500055"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors leading-relaxed group flex items-start gap-1"
+                      className="text-slate-600 dark:text-white/70 hover:text-purple-600 dark:hover:text-purple-300 transition-colors leading-relaxed group flex items-start gap-1"
                     >
                       <span>
                         Kingdom of Christ Ministries,<br />
@@ -99,10 +99,10 @@ export default function Contact() {
                     <Phone className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1">
                       Phone
                     </h4>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-slate-600 dark:text-white/70">
                       +91 96409 43777
                     </p>
                   </div>
@@ -113,10 +113,10 @@ export default function Contact() {
                     <Mail className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1">
                       Email
                     </h4>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-slate-600 dark:text-white/70">
                       info@kingdomofchrist.org
                     </p>
                   </div>
@@ -127,10 +127,10 @@ export default function Contact() {
                     <Clock className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1">
                       Hours
                     </h4>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-slate-600 dark:text-white/70">
                       Open 24/7 for Prayer & Worship
                     </p>
                   </div>
@@ -139,8 +139,9 @@ export default function Contact() {
             </div>
 
             {/* Map */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 h-64 relative group">
-              <a
+            <div className="bg-white dark:bg-white/[0.02] rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/[0.05] h-[20rem] relative group dark:backdrop-blur-3xl p-2">
+              <div className="absolute inset-2 rounded-2xl overflow-hidden">
+                <a
                 href="https://maps.google.com/?q=Kingdom+of+Christ+Ministries,+15-201,+Vivekananda+Nagar,+Srinivas+Nagar,+Jeedimetla,+Hyderabad,+Telangana+500055"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -155,23 +156,24 @@ export default function Contact() {
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3805.5369!2d78.43506!3d17.52098!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb91e2f02d5555%3A0x2a6c6c6b6a6a6a6a!2sVivekananda+Nagar%2C+Jeedimetla%2C+Hyderabad%2C+Telangana+500055!5e0!3m2!1sen!2sin!4v1716000000000"
                 width="100%"
                 height="100%"
-                style={{ border: 0 }}
+                style={{ border: 0, filter: "dark:invert(0.9) dark:hue-rotate(180deg)" }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
+              </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+          <div className="bg-white dark:bg-white/[0.02] rounded-3xl p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/[0.05] dark:backdrop-blur-3xl h-fit">
+            <h3 className="text-2xl font-bold mb-8 text-slate-900 dark:text-white tracking-tight">
               Send us a Message
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-white/80 mb-2">
                   Name *
                 </label>
                 <input
@@ -180,7 +182,7 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.03] text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder:text-slate-400 dark:placeholder:text-white/20"
                   placeholder="Your name"
                 />
               </div>
@@ -252,11 +254,11 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={isSubmitting || submitStatus === "success"}
-                className={`w-full py-4 text-white rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${submitStatus === "success"
-                    ? "bg-green-600 cursor-default"
+                className={`w-full py-4 text-white rounded-xl font-bold tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${submitStatus === "success"
+                    ? "bg-emerald-500 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border dark:border-emerald-500/30 cursor-default"
                     : submitStatus === "error"
-                      ? "bg-red-600 hover:bg-red-700"
-                      : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/50 hover:scale-[1.02]"
+                      ? "bg-rose-500 dark:bg-rose-500/20 dark:text-rose-400 dark:border dark:border-rose-500/30"
+                      : "bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-white/10 dark:to-white/5 dark:backdrop-blur-xl dark:border dark:border-white/10 dark:hover:bg-white/20 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-[1.02]"
                   } ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""}`}
               >
                 {isSubmitting ? (
