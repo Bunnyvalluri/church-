@@ -11,8 +11,14 @@ const contactSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name is too long")
-    .trim(),
-  email: z.string().email("Invalid email format").toLowerCase().trim(),
+    .trim()
+    .regex(/^[\p{L}\s'\-\.]+$/u, "Name contains invalid characters"),
+  email: z
+    .string()
+    .email("Invalid email format")
+    .toLowerCase()
+    .trim()
+    .max(254, "Email is too long"), // RFC 5321 max
   phone: z
     .string()
     .max(20, "Phone is too long")
@@ -27,33 +33,39 @@ const contactSchema = z.object({
   message: z
     .string()
     .min(10, "Message must be at least 10 characters")
-    .max(2000, "Message is too long")
+    .max(5000, "Message is too long") // increased from 2000
     .trim(),
 });
 
-// ── Rate limit config ────────────────────────────────────────────────────────
+// ── Sanitizer config ─────────────────────────────────────────────────────────
+const sanitize = (s: string) =>
+  sanitizeHtml(s, {
+    allowedTags: [],        // strip ALL HTML
+    allowedAttributes: {},
+    disallowedTagsMode: "discard",
+  });
+
+// ── Rate limit: 5 submissions per minute per IP ──────────────────────────────
 const RL_OPTS = { windowMs: 60_000, maxRequests: 5 };
 
 // ── POST /api/contact ────────────────────────────────────────────────────────
 export async function POST(req: Request) {
-  // 1. Rate limiting
   const ip = getClientIp(req);
   const rlHeaders = rateLimitHeaders(ip, RL_OPTS);
 
+  // 1. Rate limiting
   if (isRateLimited(ip, RL_OPTS)) {
     return NextResponse.json(
       { success: false, error: "Too many requests. Please wait before trying again." },
-      { status: 429, headers: { ...rlHeaders, 'Retry-After': '60' } }
+      { status: 429, headers: { ...rlHeaders, "Retry-After": "60" } }
     );
   }
 
-  // 2. Parse body safely
+  // 2. Parse body
   const body = await safeJson<unknown>(req);
-  if (!body) {
-    return err("Invalid JSON body", 400);
-  }
+  if (!body) return err("Invalid or missing JSON body", 400);
 
-  // 3. Validate with Zod
+  // 3. Validate
   const parsed = contactSchema.safeParse(body);
   if (!parsed.success) {
     const details = parsed.error.errors.map((e) => ({
@@ -65,40 +77,46 @@ export async function POST(req: Request) {
 
   const { name, email, phone, subject, message } = parsed.data;
 
-  // 4. Sanitise: use sanitize-html for proper XSS prevention
-  const sanitize = (s: string) => sanitizeHtml(s, {
-    allowedTags: [], // Strip all HTML tags
-    allowedAttributes: {}
-  });
-  
+  // 4. Sanitise all string inputs
   const safeData = {
-    name: sanitize(name),
-    email,
-    phone: phone ? sanitize(phone) : null,
+    name:    sanitize(name),
+    email,                          // email is safe as validated by Zod
+    phone:   phone ? sanitize(phone) : null,
     subject: sanitize(subject),
     message: sanitize(message),
   };
 
-  // 5. Persist to database
+  // 5. Persist to database with timeout guard
   try {
-    const record = await prisma.contactMessage.create({ data: safeData });
-    console.log(`[CONTACT] Message #${record.id} saved from ${name} <${email}>`);
+    const record = await Promise.race([
+      prisma.contactMessage.create({ data: safeData }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("DB timeout")), 8_000)
+      ),
+    ]);
+
+    console.log(`[CONTACT] ✅ Message #${record.id} from ${safeData.name} <${email}>`);
 
     return ok(
       { message: "Your message has been received. We will get back to you soon!" },
       201
     );
-  } catch (dbError) {
-    console.error("[CONTACT] DB write error:", dbError);
-    // Fallback: still acknowledge the user but flag internally
+  } catch (dbError: unknown) {
+    const msg = dbError instanceof Error ? dbError.message : String(dbError);
+    const isTimeout = msg.includes("timeout");
+
+    console.error(`[CONTACT] ❌ DB ${isTimeout ? "timeout" : "error"}:`, msg);
+
     return err(
-      "We received your request but encountered a server issue. Our team has been notified.",
-      500
+      isTimeout
+        ? "The server is temporarily busy. Please try again in a moment."
+        : "We received your request but encountered a server issue. Our team has been notified.",
+      isTimeout ? 503 : 500
     );
   }
 }
 
 // ── GET /api/contact — health check ─────────────────────────────────────────
 export async function GET() {
-  return ok({ status: "Contact API is healthy" });
+  return ok({ status: "ok", endpoint: "Contact API" });
 }
