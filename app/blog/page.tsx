@@ -1,12 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import { User, Calendar, Tag, ArrowRight } from "lucide-react";
 
 export default function BlogPage() {
   const posts = [
     {
       title: "Finding Peace in Anxiety",
-      slug: "finding-peace-in-anxiety",
       excerpt: "Learn how to trust God even when life feels overwhelming and uncertain.",
       author: "Bishop Kurra Kristhu Raju",
       date: "Jan 24, 2026",
@@ -16,7 +14,6 @@ export default function BlogPage() {
     },
     {
       title: "The Importance of Community",
-      slug: "importance-of-community",
       excerpt: "Why we need each other to grow in our spiritual journey.",
       author: "Pastor Sarah Johnson",
       date: "Jan 18, 2026",
@@ -26,7 +23,6 @@ export default function BlogPage() {
     },
     {
       title: "Prayer: A Conversation with God",
-      slug: "prayer-conversation-with-god",
       excerpt: "Understanding the true power and purpose of daily prayer.",
       author: "Pastor John David",
       date: "Jan 10, 2026",
@@ -36,7 +32,6 @@ export default function BlogPage() {
     },
     {
       title: "Serving with Joy",
-      slug: "serving-with-joy",
       excerpt: "Discovering your spiritual gifts and using them to serve others.",
       author: "Bishop Kurra Kristhu Raju",
       date: "Jan 5, 2026",
@@ -46,7 +41,6 @@ export default function BlogPage() {
     },
     {
       title: "Understanding Grace",
-      slug: "understanding-grace",
       excerpt: "A deep dive into what grace really means for a believer.",
       author: "Pastor Michael Brown",
       date: "Dec 30, 2025",
@@ -56,7 +50,6 @@ export default function BlogPage() {
     },
     {
       title: "Family Worship at Home",
-      slug: "family-worship-at-home",
       excerpt: "Practical tips for leading your family in spiritual growth.",
       author: "Pastor Sarah Johnson",
       date: "Dec 25, 2025",
@@ -84,16 +77,14 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post, index) => (
               <article
-                key={post.slug}
+                key={index}
                 className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 dark:border-gray-700 flex flex-col h-full"
               >
                 <div className="relative h-48 overflow-hidden">
-                  <Image
+                  <img
                     src={post.image}
                     alt={post.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4">
                     <span className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -115,7 +106,7 @@ export default function BlogPage() {
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 hover:text-purple-600 transition-colors">
-                    <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                    <Link href={`/blog/${index}`}>{post.title}</Link>
                   </h3>
 
                   <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-1">
@@ -133,7 +124,7 @@ export default function BlogPage() {
                         </span>
                       </div>
                       <Link
-                        href={`/blog/${post.slug}`}
+                        href={`/blog/${index}`}
                         className="text-purple-600 hover:text-purple-700 dark:text-purple-400 text-sm font-semibold flex items-center gap-1"
                       >
                         Read <ArrowRight className="w-4 h-4" />

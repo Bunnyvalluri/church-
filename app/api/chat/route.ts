@@ -7,9 +7,9 @@ import { getClientIp, safeJson } from '@/lib/apiResponse';
 // ── OpenRouter client ────────────────────────────────────────────────────────
 const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY ?? '',
+  apiKey: process.env.OPENROUTER_API_KEY || '',
   defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL ?? 'https://church-eight-hazel.vercel.app',
+    'HTTP-Referer': 'https://church-valluri-rahuls-projects.vercel.app',
     'X-Title': 'KCM Church Assistant',
   },
 });
@@ -116,14 +116,14 @@ export async function POST(req: Request) {
       ],
     });
 
-    const stream = OpenAIStream(response as Parameters<typeof OpenAIStream>[0]);
+    const stream = OpenAIStream(response as any);
     return new StreamingTextResponse(stream, { headers: rlHeaders });
 
-  } catch (error: unknown) {
-    const e = error as { message?: string; status?: number };
-    console.error('[CHAT] OpenRouter error:', e?.message ?? String(error));
+  } catch (error: any) {
+    console.error('[CHAT] OpenRouter error:', error?.message || error);
 
-    const status = (typeof e?.status === 'number') ? e.status : 500;
+    // Distinguish between OpenRouter errors and network errors
+    const status = error?.status || 500;
     const message =
       status === 401 ? 'AI service authentication failed. Please contact support.' :
       status === 429 ? 'AI service is busy. Please try again in a moment.' :

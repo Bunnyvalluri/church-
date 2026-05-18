@@ -46,24 +46,24 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-14 sm:py-24 bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section id="contact" className="py-24 bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
             Get in{" "}
             <span className="text-gradient">Touch</span>
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 px-2 sm:px-0">
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll
             respond as soon as possible.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Info */}
-          <div className="space-y-6 sm:space-y-8">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 sm:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="space-y-8">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
                 Contact Information
               </h3>
