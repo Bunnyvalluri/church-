@@ -84,19 +84,8 @@
     position: relative;
   }
 
-  /* Premium Noise Overlay */
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  }
+  /* Performance-Optimized: SVG noise overlays cause massive paint lag on scroll.
+     We removed the full-screen feTurbulence filter to ensure 60fps scrolling and fast rendering. */
 }
 
 @layer utilities {
@@ -336,9 +325,13 @@ html {
    SMOOTH GLOBAL ENHANCEMENTS
    ============================== */
 
-/* Smooth transitions on ALL interactive elements */
+/* Optimized transitions: Transition specific properties to avoid triggering heavy reflow/repaint calculations on every layout element */
 a, button, input, textarea, select, [role="button"] {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Smooth image scaling */
