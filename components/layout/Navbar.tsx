@@ -76,7 +76,7 @@ export default function Navbar() {
                   rel="noopener noreferrer"
                   aria-label={label}
                   className={cn(
-                    "w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-200 hover:bg-white/10 hover:scale-110",
+                    "social-icon w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-200 hover:bg-white/10",
                     color
                   )}
                 >

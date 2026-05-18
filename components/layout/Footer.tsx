@@ -84,7 +84,7 @@ export default function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#1877F2]/40 hover:brightness-110"
+                className="social-icon w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center transition-all duration-300 hover:shadow-lg hover:shadow-[#1877F2]/40 hover:brightness-110"
               >
                 <Facebook className="h-5 w-5" />
               </a>
@@ -92,7 +92,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-pink-500/40 hover:brightness-110"
+                className="social-icon w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/40 hover:brightness-110"
               >
                 <Instagram className="h-5 w-5" />
               </a>
@@ -100,7 +100,7 @@ export default function Footer() {
                 href="https://youtube.com/@kcmchurchshapur7107?si=NbnoJjdl5lqt7fkO"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#FF0000] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#FF0000]/40 hover:brightness-110"
+                className="social-icon w-10 h-10 rounded-full bg-[#FF0000] text-white flex items-center justify-center transition-all duration-300 hover:shadow-lg hover:shadow-[#FF0000]/40 hover:brightness-110"
               >
                 <Youtube className="h-5 w-5" />
               </a>
@@ -108,7 +108,7 @@ export default function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#1DA1F2]/40 hover:brightness-110"
+                className="social-icon w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center transition-all duration-300 hover:shadow-lg hover:shadow-[#1DA1F2]/40 hover:brightness-110"
               >
                 <Twitter className="h-5 w-5" />
               </a>
