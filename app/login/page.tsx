@@ -24,6 +24,29 @@ export default function LoginPage() {
       router.replace("/dashboard");
     }
   }, [mounted, status, router]);
+  
+  // Handle social redirect result (popup fallbacks/compatibility)
+  useEffect(() => {
+    if (mounted) {
+      const handleRedirectResult = async () => {
+        try {
+          const { getRedirectResult } = await import("firebase/auth");
+          const result = await getRedirectResult(auth);
+          if (result) {
+            console.info("[AUTH] Redirect sign-in successful for:", result.user?.email);
+          }
+        } catch (err: any) {
+          console.error("[AUTH] Redirect sign-in error:", err);
+          if (err.code === "auth/operation-not-allowed") {
+            setError(`Google login is not enabled in your Firebase Console. Please enable "Google" under Sign-in methods in your Firebase Console.`);
+          } else {
+            setError("Social login redirect failed. Please try again.");
+          }
+        }
+      };
+      handleRedirectResult();
+    }
+  }, [mounted]);
 
   const handleSocialLogin = async (provider: any, name: string) => {
     setSocialLoading(name);
@@ -31,10 +54,32 @@ export default function LoginPage() {
     try {
       await signInWithPopup(auth, provider);
     } catch (err: any) {
-      console.error(`${name} Sign-in Error:`, err);
-      setError(`${name} sign-in failed. Please try again.`);
-    } finally {
-      setSocialLoading(null);
+      console.warn(`[AUTH] ${name} Popup sign-in warning (might be blocked or policy mismatch):`, err.code || err);
+      
+      const fallbackErrors = [
+        "auth/popup-blocked",
+        "auth/cancelled-popup-request",
+        "auth/popup-closed-by-user",
+        "auth/network-request-failed"
+      ];
+      
+      if (fallbackErrors.includes(err.code) || err.message?.includes("COOP")) {
+        console.info(`[AUTH] Attempting robust ${name} redirect fallback...`);
+        try {
+          const { signInWithRedirect } = await import("firebase/auth");
+          await signInWithRedirect(auth, provider);
+        } catch (redirectErr: any) {
+          console.error(`[AUTH] ${name} Redirect Fallback Error:`, redirectErr);
+          setError(`${name} sign-in failed. Please try using your email and password or enable popups.`);
+          setSocialLoading(null);
+        }
+      } else if (err.code === "auth/operation-not-allowed") {
+        setError(`Google login is not enabled in your Firebase Console. Please enable "Google" under Sign-in methods in your Firebase Console.`);
+        setSocialLoading(null);
+      } else {
+        setError(err.message || `${name} sign-in failed. Please try again.`);
+        setSocialLoading(null);
+      }
     }
   };
 
