@@ -1,16 +1,14 @@
 import dynamic from "next/dynamic";
 import Hero from "@/components/sections/Hero";
-import Navbar from "@/components/layout/Navbar";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import About from "@/components/sections/About";
+import Services from "@/components/sections/Services";
+import Events from "@/components/sections/Events";
+import Sermons from "@/components/sections/Sermons";
+import Contact from "@/components/sections/Contact";
+import Footer from "@/components/layout/Footer";
 
-// Critical components loaded immediately
-// Everything else lazy loaded
-const About = dynamic(() => import("@/components/sections/About"), { ssr: true });
-const Services = dynamic(() => import("@/components/sections/Services"), { ssr: true });
-const Events = dynamic(() => import("@/components/sections/Events"), { ssr: true });
-const Sermons = dynamic(() => import("@/components/sections/Sermons"), { ssr: true });
-const Contact = dynamic(() => import("@/components/sections/Contact"), { ssr: true });
-const Footer = dynamic(() => import("@/components/layout/Footer"), { ssr: true });
+const Navbar = dynamic(() => import("@/components/layout/Navbar"), { ssr: false });
 const AIChat = dynamic(() => import("@/components/ai/AIChat"), { ssr: false }); // Chat is client-only interactive
 
 export default function Home() {
