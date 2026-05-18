@@ -14,7 +14,11 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-16 h-8 bg-black/5 dark:bg-white/5 rounded-full border border-black/5 dark:border-white/10 animate-pulse" />
+      <button
+        disabled
+        className="w-16 h-8 bg-black/5 dark:bg-white/5 rounded-full border border-black/5 dark:border-white/10 animate-pulse cursor-not-allowed"
+        aria-label="Toggle theme"
+      />
     );
   }
 
