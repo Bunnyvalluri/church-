@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -259,25 +259,6 @@ export default function Navbar() {
           )}
         </div>
       </nav>
-
-      {/* ΓöÇΓöÇ Floating Social Sidebar (Desktop) ΓöÇΓöÇ */}
-      <div className="fixed left-0 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-1 pl-1">
-        {socialLinks.map(({ icon: Icon, href, label, bg }) => (
-          <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-            aria-label={label} title={label}
-            className={cn(
-              "group relative flex items-center w-9 h-9 rounded-r-xl overflow-hidden transition-all duration-300 hover:w-28 shadow-lg text-white",
-              bg
-            )}>
-            <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center">
-              <Icon className="w-4 h-4 transition-transform duration-500 group-hover:rotate-[360deg]" />
-            </div>
-            <span className="text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pr-3">
-              {label}
-            </span>
-          </a>
-        ))}
-      </div>
     </div>
   );
 }
