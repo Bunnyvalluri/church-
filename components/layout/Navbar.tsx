@@ -71,7 +71,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-2 text-purple-300/70">
               <ChevronRight className="w-3 h-3" />
               <span className="text-[11px] tracking-wide">
-                Sunday Services: 5:45 AM ┬╖ 8:30 AM ┬╖ 10:30 AM
+                Sunday Services: 5:45 AM | 8:30 AM | 10:30 AM
               </span>
               <ChevronRight className="w-3 h-3" />
             </div>
